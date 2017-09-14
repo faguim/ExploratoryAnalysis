@@ -1,0 +1,180 @@
+Episode 84 – Congenital Heart Disease Emergencies
+
+This is Congenital Heart Disease Emergencies on EM cases with Gary Joubert and Ashley Strobel.
+
+You might be surprised to learn that the prevalence of critical cardiac disease in infants is almost as high as the prevalence of infant sepsis. And if you’re like me, you don’t feel quite as confident managing sick infants with critical heart disease as you do managing sepsis. Critical congenital heart defects are often missed in the ED. For a variety of reasons, there are currently more children with congenital heart disease presenting to the ED than ever before and these numbers will continue to grow in the future. When I was in medical school I vaguely remember learning the complex physiology and long lists of congenital heart diseases, which I’ve now all but forgotten. What we really need to know about congenital heart disease emergencies is what actions to take in the ED when we have a cyanotic or shocky baby in front of us in the resuscitation room. So with the goal of learning a practical approach to congenital heart disease emergencies using the child’s age, colour and few simple tests, Dr. Strobel and Dr. Joubert will discuss some key actions, pearls and pitfalls so that the next time you’re faced with that crashing baby in the resuscitation room, you’ll know exactly what to do.
+
+This podcast topic was chosen based on a Canada-wide needs assessment by TREKK – translating emergency knowledge for kids, and after a lengthy search for just the right expert to blow your mind with their knowledge, they found the brilliant Dr. Gary Joubert, pediatric emergency physician and cardiologist. And when I started researching this topic I came across a fantastic review article from the Emergency Medicine Clinics of North America who’s lead author was kind enough to join us for this podcast – Dr. Ashley Strobel.
+
+General Approach to Congenital Heart Disease Emergencies: Age, Colour & Tests
+
+Rather than learning all the complicated details of every congenital heart lesion, this simple approach let’s you focus on time-sensitive life-saving treatments and practical management of the child.
+
+ 
+1. Age: Less than one month or greater than one month?
+
+Any infant < 1 month of age with cyanosis or shock should be considered to have duct-dependent critical congenital cardiac disease until proven otherwise. This is almost always a left heart lesion/ductal dependent lesion such as Tetralogy of Fallot, which almost always benefit from prostaglandins. Shunting or mixing lesions such as VSD or PDA and heart failure typically present later during infancy, usually after 1-6 months of age.
+
+ 
+2. Colour: Are they Pink, Grey or Blue?
+
+Infants with congenital cardiac conditions usually appear on observation to the clinician in one of three ways:
+
+Pink: think heart failure (adequate pulmonary blood flow, relatively well-perfused and oxygenated; usually due to a shunting lesion)
+
+Grey: think shock/circulatory collapse (not enough systemic flow, not oxygenating well; usually left-sided obstructive, ductal-dependent lesion). These patients are very sick with hypotension, tachypena and poor capillary refill. They will almost always benefit from fluids and prostaglandins if less than 1 month in age.
+
+Blue: think right obstructive duct-dependent in the first month of life or mixing lesion (inadequate pulmonary blood flow: usually right-sided obstructive ductal-dependent lesion or a mixing lesion) after one month of life. These patients also almost always require prostaglandins.
+
+    Bedside Pearl: The tachypneic infant who appears to be struggling to breath (i.e. increased work of breathing) usually has an underlying respiratory cause vs. the infant who is displaying ‘silent tachypnea’, without increased work of breathing is usually secondary to metabolic acidosis from a cardiac or metabolic cause.
+
+When faced with a blue baby in the ED, there are 4 etiologies to always consider.
+
+The big 4 Causes of Neonatal Cyanosis
+
+    Congenital Heart Disease
+    Sepsis
+    Respiratory disorders (i.e., pneumonia, ARDS)
+    Hemaglobinopathy (i.e., polycythemia, methemoglobinemia)
+
+To distinguish central cyanosis from peripheral cyanosis, look for bluish discoloration inside the mouth – tongue, mucous membranes and lips.
+
+ 
+
+ 
+3. Bedside and Physical Examination Tests in Congenital Heart Disease Emergencies
+
+Hyperoxia Test: Differentiating pulmonary disorders from cardiac disorders
+
+One clue on history for differentiating respiratory disease from cardiac disease in the sick infant who presents to the ED is asking about the timing of symptoms: Symptoms of respiratory conditions tend to start at birth as apposed to cardiac conditions tend to present a few days after birth, when the ductus begins closing. On physical exam, dyspnea in the absence of the classic signs of respiratory distress should trigger you to consider a cardiac or metabolic cause as described above. However, in infants these historical and physical exam clues aren’t always so clear. This is where the hyperoxia test comes in:
+
+The hyperoxia test  was originally described using the PAO2 garnered from the ABG.  Although accurate, this was a cumbersome, painful and lengthy method. A simpler method involves using a pulse oximeter before and after the patient receives 100% oxygen (or as close to a 100% FIO2 as possible) for 5-10 minutes and noting whether or not the oxygen saturation improves. If the oxygen saturation improves then the underlying cause of the oxygen desaturation favours a respiratory etiology, whereas if the oxgygen saturation does not improve, a cardiac cause is favoured.
+
+Caution! 100% oxygen is a pulmonary vasodilator and could worsen respiratory distress in a patient with ductal-dependent lesions, by decreasing PVR and increasing pulmonary blood flow, leading to pulmonary over-circulation
+
+ 
+
+Pulse Delay or Absence: Decreased or absent femoral pulses may suggest coarctation of the aorta
+
+ 
+
+Brachial-femoral pulse differential: pulses should arrive at the brachial and femoral pulse simultaneously, if there is a brachial-femoral delay there may be an issue
+
+ 
+
+Blood pressure differential: Difference between preductal (i.e. right arm) blood pressure and lower extremity blood pressure of > 10 mmHg, think of an obstructive process to the lower extremities.
+
+ 
+
+O2 saturation differential: Difference in O2 saturation > 3% between right upper and right lower extremity, <94% in lower extremities, or < 90% in any extremity are considered clinically significant
+
+ 
+ECG in Congenital Heart Disease Emergencies
+
+Look for LVH as well as Persistent RVH after 1 month of age
+
+One of the most important considerations in the infant ECG to help determine whether your patient has a congenital heart defect (in particular a ductal dependent lesion), is to determine whether left ventricular hypertrophy is present (which is always abnormal regardless of age) and to determine whether right ventricular hypertrophy is present after the age of one month. Normal newborns have high right sided pressures (right axis deviation) with ECG signs of RVH. However, persistent high right sided pressures and RVH after one month of life is likely due to a cardiac obstructive lesion.
+
+ 
+
+Criteria for diagnosing RVH:
+
+    Positive T wave in V1 after day of life 5-7;
+    R in V1 > 98th percentile for age, or
+    S in V6 > 98th percentile for age
+
+ 
+
+Criteria for diagnosing LVH:
+
+    S wave in V1 > 98th percentile, or
+    R wave in V6 > 98th percentile for age
+
+ 
+CXR Clues for Congenital Heart Disease
+
+    Clear black lung fields suggest a right cardiac obstructive lesion
+
+congenital heart disease emergencies
+
+Clear black lung fields indicative of a right obstructive lesion
+
+    Cardiomegaly
+        Usually present with left-to-right shunting. The location and type of shunting will determine which chamber is hypertrophied
+
+    Specific patterns on CXR:
+
+congenital heart disease emergencies
+
+Tetraology of Fallot: “Boot-shaped heart”
+congenital heart disease emergencies
+
+Total anomolous pulmonary venous return: “Snowman”
+congenital heart disease emergencies
+
+Transposition of the Great Arteries: “Egg on a string”
+
+ 
+
+ 
+Point of Care Ultrasound Clues for Congenital Heart Disease Emergencies
+
+With bedside ECHO, ask yourself 3 simple questions:
+
+    Is the global cardiac function poor?
+    Are there four chambers of the heart?
+    Is the septum intact?
+
+ 
+Blood Tests to consider in suspected Congenital Heart Disease Emergencies
+
+    Blood glucose (ABC Don’t Ever Forget Glucose)
+    Electrolytes (to assess for adrenal insufficiency)
+    Septic work-up
+    Methemoglobin if cyanosis without respiratory distress
+    Ammonia (metabolic diseases)
+    TSH
+    BNP: ongoing debate about usefulness of this test, particularly in the ED setting.
+        BNP < 100pg/mL to identify significant congenital heart disease had a sensitivity of 100% and specificity of 98%
+        BNP > 132.5pg/mL to detect hemodynamically significant left-to-right shunts had a 93% sensitivity and 100% specificity
+        BNP > 40pg/mL to differentiate cardiac from pulmonary causes of respiratory distress had an accuracy of 84%
+
+ 
+Treatment of Grey or Blue Infants Suspected of Duct Dependent Lesions
+
+Any neonate in distress should be presumed to be septic until proven otherwise. Early empiric antibiotics should be started as soon as possible. Prostaglandin therapy should be implemented for any grey or blue infant less than a month of age to keep the PDA open.
+
+    Caution! Prostaglandins can cause apnea and hypotension so be prepared to intubate and resuscitate.
+
+Be judicious with fluids. Use 5-10 cc/kg NS boluses to improve preload, and encourage further opening of the PDA and pulmonary blood flow through the duct. Give Oxygen. Aim for an oxygen saturation of 85% (depending on diagnosis and lesion). The use of sodium bicarbonate is controversial. It may be given empirically based on the blood gas, as acidosis aggravates hypoxic pulmonary vasoconstriction. Inotropes/vasopressors may be necessary to maintain adequate systemic perfusion and encourage pulmonary perfusion in consultation with a pediatric intensivist.
+
+Intubation Considerations in Congenital Heart Disease Emergencies: Say No to Ketamine!
+
+Etomidate is a good first line choice as an induction agent because it maintains hemodynamics. If unavailable, fentantyl is a second option. Ketamine should be avoided in patients suspected of congenital heart disease emergencies as it increases SVR, which worsens left-to-right shunting and can lead to cardiovascular collapse.
+
+Ventilation Considerations
+
+Positive pressure ventilation can increase PVR and decrease SVR and preload which can affect shunting flow, especially in a cyanotic baby. If starting positive pressure ventilation, start with a very low PEEP in these patients.
+
+ 
+The Pink Infant: Pediatric Congestive Heart Failure (CHF)
+
+Heart failure usually presents with a ‘pink’ relatively well-perfused and oxygenated infant 1 to 6 months of age. Always consider CHF in the wheezing child!
+
+The most sensitive and specific clinical findings for acute CHF in infants
+
+    < 3 ounces of formula per feed or > 40 minutes per breast feed
+    Respiratory rate > 60 breaths per minute or irregular breathing
+    Hepatomegaly – Start palpation at the iliac crest and slowly move superiorly, and feel for the liver edge. Normally, the liver edge should be < 2 cm below the costal margin. Also percuss for the size of the liver – normally, the liver should be < 8 cm wide.
+
+Other clues include poor weight gain, ventricular hypertrophy on ECG
+
+Common causes of CHF in the pediatric patient include structural causes such as VSD, ASD, Aortic Stenosis and PDA as well as other causes such as SVT, AV block, cardiomyopathy and myocarditis.
+
+Management of Acute CHF in infants
+
+It seems intuitive that kids in acute congestive heart failure should receive oxygen, however oxygen is a potent pulmonary vasodilator and could worsen hypoxemia in some congenital heart defects situations. Infants are able to tolerate oxygen saturations lower than adults and so aiming for an oxygen saturation of >85% (as apposed to >93% in adults) is a reasonable goal.
+
+Furosemide, as in adults, is indicated for pediatric patients in acute congestive heart failure.
+
+Inotropes or vasodilators (i.e., milrinone, dobutamine) may be indicated in severe heart failure in consultation with your pediatric intensivist.
