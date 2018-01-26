@@ -18,7 +18,7 @@ public class Cochrane {
 		clientConfig.getFeatures().put(JSONConfiguration.FEATURE_POJO_MAPPING, Boolean.TRUE);
 
 		Client client = Client.create(clientConfig);
-		WebResource webResource = client.resource("https://test-api.cochrane.org/reviews");
+		WebResource webResource = client.resource("https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=pubmed&id=19008416&rettype=fasta&retmode=text");
 
 		ClientResponse response = webResource.accept(MediaType.APPLICATION_JSON).type(MediaType.APPLICATION_JSON)
 				.get(ClientResponse.class);
@@ -27,9 +27,10 @@ public class Cochrane {
 			throw new RuntimeException("Failed : HTTP error code : " + response.getStatus());
 		}
 		String responseBody = response.getEntity(String.class);
-
-		JSONObject responseJson = new JSONObject(responseBody);
-		System.out.println(responseJson);
+		System.out.println(responseBody);
+//
+//		JSONObject responseJson = new JSONObject(responseBody);
+//		System.out.println(responseJson);
 	}
 
 }
