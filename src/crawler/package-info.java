@@ -1,8 +1,0 @@
-/**
- * 
- */
-/**
- * @author fagner
- *
- */
-package crawler;
