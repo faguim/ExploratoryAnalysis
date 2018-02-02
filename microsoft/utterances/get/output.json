@@ -1,0 +1,1051 @@
+[
+  {
+    "id": -13365309,
+    "text": "rationale: paralytic ileus is characterized by the signs and symptoms of intestinal obstruction but without any mechanical lesions in the intestinal lumen. several medical and surgical conditions can lead to this ailment, such as electrolyte disturbances that impair intestinal motility. however, hypercalcemia secondary to multiple myeloma as a major cause of paralytic ileus has rarely been reported. patient concerns: the patient got severe constipation with difficulty in the passage of both gas",
+    "intentLabel": "Description",
+    "tokenizedText": [
+      "rationale",
+      ":",
+      "paralytic",
+      "ileus",
+      "is",
+      "characterized",
+      "by",
+      "the",
+      "signs",
+      "and",
+      "symptoms",
+      "of",
+      "intestinal",
+      "obstruction",
+      "but",
+      "without",
+      "any",
+      "mechanical",
+      "lesions",
+      "in",
+      "the",
+      "intestinal",
+      "lumen",
+      ".",
+      "several",
+      "medical",
+      "and",
+      "surgical",
+      "conditions",
+      "can",
+      "lead",
+      "to",
+      "this",
+      "ailment",
+      ",",
+      "such",
+      "as",
+      "electrolyte",
+      "disturbances",
+      "that",
+      "impair",
+      "intestinal",
+      "motility",
+      ".",
+      "however",
+      ",",
+      "hypercalcemia",
+      "secondary",
+      "to",
+      "multiple",
+      "myeloma",
+      "as",
+      "a",
+      "major",
+      "cause",
+      "of",
+      "paralytic",
+      "ileus",
+      "has",
+      "rarely",
+      "been",
+      "reported",
+      ".",
+      "patient",
+      "concerns",
+      ":",
+      "the",
+      "patient",
+      "got",
+      "severe",
+      "constipation",
+      "with",
+      "difficulty",
+      "in",
+      "the",
+      "passage",
+      "of",
+      "both",
+      "gas"
+    ],
+    "entityLabels": [],
+    "intentPredictions": [
+      {
+        "name": "Feedback",
+        "score": 0.41
+      },
+      {
+        "name": "None",
+        "score": 0.05
+      },
+      {
+        "name": "Procedure",
+        "score": 0.0
+      },
+      {
+        "name": "Diagnosis",
+        "score": 0.0
+      },
+      {
+        "name": "Description",
+        "score": -1.0
+      }
+    ],
+    "entityPredictions": []
+  },
+  {
+    "id": -13149345,
+    "text": "provide [ mechanical ] ventilation",
+    "intentLabel": "Procedure",
+    "tokenizedText": [
+      "provide",
+      "[",
+      "mechanical",
+      "]",
+      "ventilation"
+    ],
+    "entityLabels": [
+      {
+        "entityName": "procedure",
+        "startTokenIndex": 0,
+        "endTokenIndex": 4
+      }
+    ],
+    "intentPredictions": [
+      {
+        "name": "Procedure",
+        "score": 0.96
+      },
+      {
+        "name": "Diagnosis",
+        "score": 0.05
+      },
+      {
+        "name": "Feedback",
+        "score": 0.05
+      },
+      {
+        "name": "None",
+        "score": 0.03
+      },
+      {
+        "name": "Description",
+        "score": -1.0
+      }
+    ],
+    "entityPredictions": [
+      {
+        "entityName": "procedure",
+        "startTokenIndex": 0,
+        "endTokenIndex": 4,
+        "phrase": "provide [ mechanical ] ventilation",
+        "entityType": 0
+      }
+    ]
+  },
+  {
+    "id": -13149243,
+    "text": "needle or chest tube insertion",
+    "intentLabel": "Procedure",
+    "tokenizedText": [
+      "needle",
+      "or",
+      "chest",
+      "tube",
+      "insertion"
+    ],
+    "entityLabels": [
+      {
+        "entityName": "procedure",
+        "startTokenIndex": 2,
+        "endTokenIndex": 4
+      }
+    ],
+    "intentPredictions": [
+      {
+        "name": "Procedure",
+        "score": 0.93
+      },
+      {
+        "name": "Feedback",
+        "score": 0.06
+      },
+      {
+        "name": "Diagnosis",
+        "score": 0.05
+      },
+      {
+        "name": "None",
+        "score": 0.03
+      },
+      {
+        "name": "Description",
+        "score": -1.0
+      }
+    ],
+    "entityPredictions": [
+      {
+        "entityName": "procedure",
+        "startTokenIndex": 2,
+        "endTokenIndex": 4,
+        "phrase": "chest tube insertion",
+        "entityType": 0
+      }
+    ]
+  },
+  {
+    "id": -13149242,
+    "text": "administrate bolus morphine and sodium nitruprusside in continuous infusion",
+    "intentLabel": "Procedure",
+    "tokenizedText": [
+      "administrate",
+      "bolus",
+      "morphine",
+      "and",
+      "sodium",
+      "nitruprusside",
+      "in",
+      "continuous",
+      "infusion"
+    ],
+    "entityLabels": [
+      {
+        "entityName": "medicine",
+        "startTokenIndex": 1,
+        "endTokenIndex": 2
+      },
+      {
+        "entityName": "medicine",
+        "startTokenIndex": 4,
+        "endTokenIndex": 5
+      }
+    ],
+    "intentPredictions": [
+      {
+        "name": "Procedure",
+        "score": 0.95
+      },
+      {
+        "name": "Feedback",
+        "score": 0.07
+      },
+      {
+        "name": "None",
+        "score": 0.04
+      },
+      {
+        "name": "Diagnosis",
+        "score": 0.03
+      },
+      {
+        "name": "Description",
+        "score": -1.0
+      }
+    ],
+    "entityPredictions": [
+      {
+        "entityName": "medicine",
+        "startTokenIndex": 1,
+        "endTokenIndex": 2,
+        "phrase": "bolus morphine",
+        "entityType": 0
+      },
+      {
+        "entityName": "medicine",
+        "startTokenIndex": 4,
+        "endTokenIndex": 5,
+        "phrase": "sodium nitruprusside",
+        "entityType": 0
+      }
+    ]
+  },
+  {
+    "id": -13149231,
+    "text": "provide non invasive ventilation",
+    "intentLabel": "Procedure",
+    "tokenizedText": [
+      "provide",
+      "non",
+      "invasive",
+      "ventilation"
+    ],
+    "entityLabels": [
+      {
+        "entityName": "procedure",
+        "startTokenIndex": 0,
+        "endTokenIndex": 3
+      }
+    ],
+    "intentPredictions": [
+      {
+        "name": "Procedure",
+        "score": 0.97
+      },
+      {
+        "name": "Diagnosis",
+        "score": 0.06
+      },
+      {
+        "name": "Feedback",
+        "score": 0.05
+      },
+      {
+        "name": "None",
+        "score": 0.02
+      },
+      {
+        "name": "Description",
+        "score": -1.0
+      }
+    ],
+    "entityPredictions": [
+      {
+        "entityName": "procedure",
+        "startTokenIndex": 0,
+        "endTokenIndex": 3,
+        "phrase": "provide non invasive ventilation",
+        "entityType": 0
+      }
+    ]
+  },
+  {
+    "id": -13149229,
+    "text": "left side heart failure",
+    "intentLabel": "Diagnosis",
+    "tokenizedText": [
+      "left",
+      "side",
+      "heart",
+      "failure"
+    ],
+    "entityLabels": [
+      {
+        "entityName": "finding",
+        "startTokenIndex": 2,
+        "endTokenIndex": 3
+      }
+    ],
+    "intentPredictions": [
+      {
+        "name": "Diagnosis",
+        "score": 0.37
+      },
+      {
+        "name": "Procedure",
+        "score": 0.06
+      },
+      {
+        "name": "Feedback",
+        "score": 0.05
+      },
+      {
+        "name": "None",
+        "score": 0.03
+      },
+      {
+        "name": "Description",
+        "score": -1.0
+      }
+    ],
+    "entityPredictions": [
+      {
+        "entityName": "finding",
+        "startTokenIndex": 2,
+        "endTokenIndex": 3,
+        "phrase": "heart failure",
+        "entityType": 0
+      }
+    ]
+  },
+  {
+    "id": -13149227,
+    "text": "pulmonary hypertension",
+    "intentLabel": "Diagnosis",
+    "tokenizedText": [
+      "pulmonary",
+      "hypertension"
+    ],
+    "entityLabels": [
+      {
+        "entityName": "finding",
+        "startTokenIndex": 0,
+        "endTokenIndex": 1
+      }
+    ],
+    "intentPredictions": [
+      {
+        "name": "Diagnosis",
+        "score": 0.54
+      },
+      {
+        "name": "Procedure",
+        "score": 0.06
+      },
+      {
+        "name": "Feedback",
+        "score": 0.03
+      },
+      {
+        "name": "None",
+        "score": 0.02
+      },
+      {
+        "name": "Description",
+        "score": -1.0
+      }
+    ],
+    "entityPredictions": [
+      {
+        "entityName": "finding",
+        "startTokenIndex": 0,
+        "endTokenIndex": 1,
+        "phrase": "pulmonary hypertension",
+        "entityType": 0
+      }
+    ]
+  },
+  {
+    "id": -13149226,
+    "text": "cardiogenic pulmonary edema",
+    "intentLabel": "Diagnosis",
+    "tokenizedText": [
+      "cardiogenic",
+      "pulmonary",
+      "edema"
+    ],
+    "entityLabels": [
+      {
+        "entityName": "finding",
+        "startTokenIndex": 0,
+        "endTokenIndex": 2
+      }
+    ],
+    "intentPredictions": [
+      {
+        "name": "Diagnosis",
+        "score": 0.59
+      },
+      {
+        "name": "Feedback",
+        "score": 0.04
+      },
+      {
+        "name": "Procedure",
+        "score": 0.03
+      },
+      {
+        "name": "None",
+        "score": 0.03
+      },
+      {
+        "name": "Description",
+        "score": -1.0
+      }
+    ],
+    "entityPredictions": [
+      {
+        "entityName": "finding",
+        "startTokenIndex": 0,
+        "endTokenIndex": 2,
+        "phrase": "cardiogenic pulmonary edema",
+        "entityType": 0
+      }
+    ]
+  },
+  {
+    "id": -13149140,
+    "text": "pneumothorax",
+    "intentLabel": "Diagnosis",
+    "tokenizedText": [
+      "pneumothorax"
+    ],
+    "entityLabels": [
+      {
+        "entityName": "finding",
+        "startTokenIndex": 0,
+        "endTokenIndex": 0
+      }
+    ],
+    "intentPredictions": [
+      {
+        "name": "None",
+        "score": 0.42
+      },
+      {
+        "name": "Diagnosis",
+        "score": 0.38
+      },
+      {
+        "name": "Procedure",
+        "score": 0.02
+      },
+      {
+        "name": "Feedback",
+        "score": 0.02
+      },
+      {
+        "name": "Description",
+        "score": -1.0
+      }
+    ],
+    "entityPredictions": [
+      {
+        "entityName": "finding",
+        "startTokenIndex": 0,
+        "endTokenIndex": 0,
+        "phrase": "pneumothorax",
+        "entityType": 0
+      }
+    ]
+  },
+  {
+    "id": -13149136,
+    "text": "take vital signs",
+    "intentLabel": "Procedure",
+    "tokenizedText": [
+      "take",
+      "vital",
+      "signs"
+    ],
+    "entityLabels": [
+      {
+        "entityName": "procedure",
+        "startTokenIndex": 0,
+        "endTokenIndex": 2
+      }
+    ],
+    "intentPredictions": [
+      {
+        "name": "Procedure",
+        "score": 0.95
+      },
+      {
+        "name": "Diagnosis",
+        "score": 0.08
+      },
+      {
+        "name": "Feedback",
+        "score": 0.05
+      },
+      {
+        "name": "None",
+        "score": 0.03
+      },
+      {
+        "name": "Description",
+        "score": -1.0
+      }
+    ],
+    "entityPredictions": [
+      {
+        "entityName": "procedure",
+        "startTokenIndex": 0,
+        "endTokenIndex": 2,
+        "phrase": "take vital signs",
+        "entityType": 0
+      }
+    ]
+  },
+  {
+    "id": -13149134,
+    "text": "history exam",
+    "intentLabel": "Procedure",
+    "tokenizedText": [
+      "history",
+      "exam"
+    ],
+    "entityLabels": [
+      {
+        "entityName": "procedure",
+        "startTokenIndex": 0,
+        "endTokenIndex": 1
+      }
+    ],
+    "intentPredictions": [
+      {
+        "name": "Procedure",
+        "score": 0.97
+      },
+      {
+        "name": "Diagnosis",
+        "score": 0.09
+      },
+      {
+        "name": "Feedback",
+        "score": 0.04
+      },
+      {
+        "name": "None",
+        "score": 0.02
+      },
+      {
+        "name": "Description",
+        "score": -1.0
+      }
+    ],
+    "entityPredictions": [
+      {
+        "entityName": "procedure",
+        "startTokenIndex": 0,
+        "endTokenIndex": 1,
+        "phrase": "history exam",
+        "entityType": 0
+      }
+    ]
+  },
+  {
+    "id": -13149121,
+    "text": "if your consider that you have all the elements to emit a final diagnosis, please select one of the options:",
+    "intentLabel": "Feedback",
+    "tokenizedText": [
+      "if",
+      "your",
+      "consider",
+      "that",
+      "you",
+      "have",
+      "all",
+      "the",
+      "elements",
+      "to",
+      "emit",
+      "a",
+      "final",
+      "diagnosis",
+      ",",
+      "please",
+      "select",
+      "one",
+      "of",
+      "the",
+      "options",
+      ":"
+    ],
+    "entityLabels": [],
+    "intentPredictions": [
+      {
+        "name": "Feedback",
+        "score": 0.52
+      },
+      {
+        "name": "None",
+        "score": 0.03
+      },
+      {
+        "name": "Procedure",
+        "score": 0.01
+      },
+      {
+        "name": "Diagnosis",
+        "score": 0.01
+      },
+      {
+        "name": "Description",
+        "score": -1.0
+      }
+    ],
+    "entityPredictions": [
+      {
+        "entityName": "number",
+        "startTokenIndex": 17,
+        "endTokenIndex": 17,
+        "phrase": "one",
+        "entityType": 0
+      }
+    ]
+  },
+  {
+    "id": -13149050,
+    "text": "examine the patient",
+    "intentLabel": "Procedure",
+    "tokenizedText": [
+      "examine",
+      "the",
+      "patient"
+    ],
+    "entityLabels": [
+      {
+        "entityName": "procedure",
+        "startTokenIndex": 0,
+        "endTokenIndex": 0
+      }
+    ],
+    "intentPredictions": [
+      {
+        "name": "Procedure",
+        "score": 0.91
+      },
+      {
+        "name": "Diagnosis",
+        "score": 0.07
+      },
+      {
+        "name": "Feedback",
+        "score": 0.06
+      },
+      {
+        "name": "None",
+        "score": 0.02
+      },
+      {
+        "name": "Description",
+        "score": -1.0
+      }
+    ],
+    "entityPredictions": [
+      {
+        "entityName": "procedure",
+        "startTokenIndex": 0,
+        "endTokenIndex": 0,
+        "phrase": "examine",
+        "entityType": 0
+      }
+    ]
+  },
+  {
+    "id": -13149020,
+    "text": "wrong decision",
+    "intentLabel": "Feedback",
+    "tokenizedText": [
+      "wrong",
+      "decision"
+    ],
+    "entityLabels": [],
+    "intentPredictions": [
+      {
+        "name": "Feedback",
+        "score": 0.3
+      },
+      {
+        "name": "Diagnosis",
+        "score": 0.1
+      },
+      {
+        "name": "Procedure",
+        "score": 0.08
+      },
+      {
+        "name": "None",
+        "score": 0.03
+      },
+      {
+        "name": "Description",
+        "score": -1.0
+      }
+    ],
+    "entityPredictions": []
+  },
+  {
+    "id": -13149018,
+    "text": "your patient does not have conditions to be examined",
+    "intentLabel": "Feedback",
+    "tokenizedText": [
+      "your",
+      "patient",
+      "does",
+      "not",
+      "have",
+      "conditions",
+      "to",
+      "be",
+      "examined"
+    ],
+    "entityLabels": [
+      {
+        "entityName": "person",
+        "startTokenIndex": 1,
+        "endTokenIndex": 1
+      }
+    ],
+    "intentPredictions": [
+      {
+        "name": "Feedback",
+        "score": 0.48
+      },
+      {
+        "name": "None",
+        "score": 0.03
+      },
+      {
+        "name": "Procedure",
+        "score": 0.02
+      },
+      {
+        "name": "Diagnosis",
+        "score": 0.02
+      },
+      {
+        "name": "Description",
+        "score": -1.0
+      }
+    ],
+    "entityPredictions": [
+      {
+        "entityName": "person",
+        "startTokenIndex": 1,
+        "endTokenIndex": 1,
+        "phrase": "patient",
+        "entityType": 0
+      }
+    ]
+  },
+  {
+    "id": -13148981,
+    "text": "provide oxygen by a mask",
+    "intentLabel": "Procedure",
+    "tokenizedText": [
+      "provide",
+      "oxygen",
+      "by",
+      "a",
+      "mask"
+    ],
+    "entityLabels": [
+      {
+        "entityName": "procedure",
+        "startTokenIndex": 0,
+        "endTokenIndex": 4
+      }
+    ],
+    "intentPredictions": [
+      {
+        "name": "Procedure",
+        "score": 0.96
+      },
+      {
+        "name": "Diagnosis",
+        "score": 0.05
+      },
+      {
+        "name": "Feedback",
+        "score": 0.05
+      },
+      {
+        "name": "None",
+        "score": 0.02
+      },
+      {
+        "name": "Description",
+        "score": -1.0
+      }
+    ],
+    "entityPredictions": [
+      {
+        "entityName": "procedure",
+        "startTokenIndex": 0,
+        "endTokenIndex": 4,
+        "phrase": "provide oxygen by a mask",
+        "entityType": 0
+      }
+    ]
+  },
+  {
+    "id": -13148943,
+    "text": "immediate assessment",
+    "intentLabel": "Procedure",
+    "tokenizedText": [
+      "immediate",
+      "assessment"
+    ],
+    "entityLabels": [
+      {
+        "entityName": "procedure",
+        "startTokenIndex": 0,
+        "endTokenIndex": 1
+      }
+    ],
+    "intentPredictions": [
+      {
+        "name": "Procedure",
+        "score": 0.96
+      },
+      {
+        "name": "Diagnosis",
+        "score": 0.1
+      },
+      {
+        "name": "Feedback",
+        "score": 0.04
+      },
+      {
+        "name": "None",
+        "score": 0.03
+      },
+      {
+        "name": "Description",
+        "score": -1.0
+      }
+    ],
+    "entityPredictions": [
+      {
+        "entityName": "procedure",
+        "startTokenIndex": 0,
+        "endTokenIndex": 1,
+        "phrase": "immediate assessment",
+        "entityType": 0
+      }
+    ]
+  },
+  {
+    "id": -13148921,
+    "text": "provide an oxygen catheter",
+    "intentLabel": "Procedure",
+    "tokenizedText": [
+      "provide",
+      "an",
+      "oxygen",
+      "catheter"
+    ],
+    "entityLabels": [
+      {
+        "entityName": "procedure",
+        "startTokenIndex": 0,
+        "endTokenIndex": 3
+      }
+    ],
+    "intentPredictions": [
+      {
+        "name": "Procedure",
+        "score": 0.97
+      },
+      {
+        "name": "Diagnosis",
+        "score": 0.06
+      },
+      {
+        "name": "Feedback",
+        "score": 0.05
+      },
+      {
+        "name": "None",
+        "score": 0.02
+      },
+      {
+        "name": "Description",
+        "score": -1.0
+      }
+    ],
+    "entityPredictions": [
+      {
+        "entityName": "procedure",
+        "startTokenIndex": 0,
+        "endTokenIndex": 3,
+        "phrase": "provide an oxygen catheter",
+        "entityType": 0
+      }
+    ]
+  },
+  {
+    "id": -8338243,
+    "text": "physical exam",
+    "intentLabel": "Procedure",
+    "tokenizedText": [
+      "physical",
+      "exam"
+    ],
+    "entityLabels": [],
+    "intentPredictions": [
+      {
+        "name": "Procedure",
+        "score": 0.97
+      },
+      {
+        "name": "Diagnosis",
+        "score": 0.09
+      },
+      {
+        "name": "Feedback",
+        "score": 0.04
+      },
+      {
+        "name": "None",
+        "score": 0.02
+      },
+      {
+        "name": "Description",
+        "score": -1.0
+      }
+    ],
+    "entityPredictions": []
+  },
+  {
+    "id": -7780520,
+    "text": "ultrasound",
+    "intentLabel": "Procedure",
+    "tokenizedText": [
+      "ultrasound"
+    ],
+    "entityLabels": [],
+    "intentPredictions": [
+      {
+        "name": "Procedure",
+        "score": 0.97
+      },
+      {
+        "name": "Diagnosis",
+        "score": 0.15
+      },
+      {
+        "name": "None",
+        "score": 0.03
+      },
+      {
+        "name": "Feedback",
+        "score": 0.03
+      },
+      {
+        "name": "Description",
+        "score": -1.0
+      }
+    ],
+    "entityPredictions": []
+  },
+  {
+    "id": -179207,
+    "text": "diagnose",
+    "intentLabel": "Procedure",
+    "tokenizedText": [
+      "diagnose"
+    ],
+    "entityLabels": [],
+    "intentPredictions": [
+      {
+        "name": "Procedure",
+        "score": 0.97
+      },
+      {
+        "name": "Diagnosis",
+        "score": 0.15
+      },
+      {
+        "name": "None",
+        "score": 0.03
+      },
+      {
+        "name": "Feedback",
+        "score": 0.03
+      },
+      {
+        "name": "Description",
+        "score": -1.0
+      }
+    ],
+    "entityPredictions": []
+  }
+]

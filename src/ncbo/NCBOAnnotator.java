@@ -2,8 +2,11 @@ package ncbo;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -15,29 +18,54 @@ import org.json.JSONObject;
 public class NCBOAnnotator {
 	private static final String REST_URL = "http://data.bioontology.org";
 	private static final String API_KEY = "1cff5532-d88d-4a43-97a2-729e43dd2a4b";
+	private static String OUTPUT_UTTERANCE_ADD = "microsoft/utterances/add/input/";
 
-	public static void main(String[] args) throws UnsupportedEncodingException, JSONException {
-		String urlParameters;
-		String textToAnnotate = URLEncoder.encode("history of arterial hypertension, with irregular treatment",
-				"ISO-8859-1");
-		urlParameters = "text=" + textToAnnotate + "&ontologies=MESH";
-		String response = post(REST_URL + "/annotator", urlParameters);
-
-		JSONArray responseJson = new JSONArray(response);
-
-		for (int i = 0; i < responseJson.length(); i++) {
-			JSONObject jsonObject = responseJson.getJSONObject(i);
-			JSONObject annotatedClass = jsonObject.getJSONObject("annotatedClass");
-
-			String id = annotatedClass.getString("@id");
-			System.out.println("URI: " + id);
-
-			JSONArray annotations = jsonObject.getJSONArray("annotations");
-			System.out.println(annotations);
-			// for (int j = 0; j < annotations.length(); j++) {
-			// System.out.println(annotations.getJSONObject(j).getString("text"));
-			// }
+	public static void main(String[] args) throws JSONException, IOException {
+		boolean success = (new File(OUTPUT_UTTERANCE_ADD)).mkdirs();
+		if (success) {
+			System.out.println("Directory folder " + OUTPUT_UTTERANCE_ADD + "was created");
 		}
+		
+		
+		int nFiles = 1;
+		for (int i = 0; i < nFiles; i++) {
+			try(BufferedReader br = new BufferedReader(new FileReader("papers/" + i +".txt"))) {
+				StringBuilder sb = new StringBuilder();
+			    String line = br.readLine();
+
+			    while (line != null) {
+			        sb.append(line);
+			        sb.append(System.lineSeparator());
+			        line = br.readLine();
+			    }
+			    String everything = sb.toString();
+			    System.out.println(everything);
+			    
+			    String urlParameters;
+			    String textToAnnotate = URLEncoder.encode(everything, "ISO-8859-1");
+			    urlParameters = "text=" + textToAnnotate 
+			    		+ "&ontologies=MESH"
+			    		+ "&exclude_numbers=true"
+			    		+ "&exclude_synonyms=true"
+			    		+ "&longest_only=true";
+			    
+			    String response = post(REST_URL + "/annotator", urlParameters);
+			    
+			    JSONArray responseJson = new JSONArray(response);
+			    System.out.println("Resposta do servidor: " + responseJson);
+			    
+			    createJSONFile(i,everything,responseJson);
+			    
+//			    for (int j = 0; j < responseJson.length(); j++) {
+//			    	JSONObject jsonObject = responseJson.getJSONObject(j);
+//			    	System.out.println("Mapeamento " + j + ": " + jsonObject);
+//			    	System.out.println("\n");
+//			    }
+//			    System.out.println("------------------- Next -------------------\n\n\n");
+
+			}
+		}
+		
 
 		// printAnnotations(annotations);
 		// JSONArray collection = new JSONArray();
@@ -109,5 +137,44 @@ public class NCBOAnnotator {
 			e.printStackTrace();
 		}
 		return result;
+	}
+
+	public static void createJSONFile(int idPaper, String text, JSONArray mappingsJson) throws JSONException, IOException {
+//    	JSONArray utterances = new JSONArray();
+		String intentName = "Description";
+		
+		JSONObject utterance = new JSONObject();
+		utterance.put("text", text);
+		utterance.put("intentName", intentName);
+
+		JSONArray entityLabels = new JSONArray();
+    	utterance.put("entityLabels", entityLabels);
+
+		for (int i = 0; i < mappingsJson.length(); i++) {
+	    	JSONObject mappedEntity = mappingsJson.getJSONObject(i);
+	    	JSONObject annotatedClass = mappedEntity.getJSONObject("annotatedClass");
+	    	String id = annotatedClass.getString("@id");
+
+	    	JSONArray annotations = mappedEntity.getJSONArray("annotations");
+	    	
+	    	for (int j = 0; j < annotations.length(); j++) {
+	    		String startCharIndex = annotations.getJSONObject(j).getString("from");
+	    		String endCharIndex = annotations.getJSONObject(j).getString("to");
+	    		String entityName = "MeSH Term";
+	    		
+	    		JSONObject entityLabel = new JSONObject();
+	    		entityLabel.put("startCharIndex", Integer.valueOf(startCharIndex)-1);
+	    		entityLabel.put("endCharIndex", Integer.valueOf(endCharIndex)-1);
+
+	    		entityLabel.put("entityName", entityName);
+				entityLabels.put(entityLabel);
+			}
+		}
+		System.out.println(utterance);
+//		utterances.put(utterance);
+		
+		try (FileWriter file = new FileWriter(OUTPUT_UTTERANCE_ADD + idPaper + ".json")) {
+			file.write(utterance.toString());
+		}
 	}
 }

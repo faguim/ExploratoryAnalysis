@@ -1,0 +1,56 @@
+{
+	"entityLabels": [
+		{
+			"startCharIndex": 73,
+			"entityName": "MeSH Term",
+			"endCharIndex": 94
+		},
+		{
+			"startCharIndex": 572,
+			"entityName": "MeSH Term",
+			"endCharIndex": 593
+		},
+		{
+			"startCharIndex": 842,
+			"entityName": "MeSH Term",
+			"endCharIndex": 863
+		},
+		{
+			"startCharIndex": 311,
+			"entityName": "MeSH Term",
+			"endCharIndex": 319
+		},
+		{
+			"startCharIndex": 1577,
+			"entityName": "MeSH Term",
+			"endCharIndex": 1585
+		},
+		{
+			"startCharIndex": 720,
+			"entityName": "MeSH Term",
+			"endCharIndex": 730
+		},
+		{
+			"startCharIndex": 880,
+			"entityName": "MeSH Term",
+			"endCharIndex": 883
+		},
+		{
+			"startCharIndex": 889,
+			"entityName": "MeSH Term",
+			"endCharIndex": 893
+		},
+		{
+			"startCharIndex": 1107,
+			"entityName": "MeSH Term",
+			"endCharIndex": 1112
+		},
+		{
+			"startCharIndex": 1318,
+			"entityName": "MeSH Term",
+			"endCharIndex": 1328
+		}
+	],
+	"intentName": "Description",
+	"text": "RATIONALE: Paralytic ileus is characterized by the signs and symptoms of intestinal obstruction but without any mechanical lesions in the intestinal lumen. Several medical and surgical conditions can lead to this ailment, such as electrolyte disturbances that impair intestinal motility. However, hypercalcemia secondary to multiple myeloma as a major cause of paralytic ileus has rarely been reported. PATIENT CONCERNS: The patient got severe constipation with difficulty in the passage of both gas and feces for 7 days. DIAGNOSES: The patient was diagnosed with a small intestinal obstruction initially and then developed type II respiratory failure. Investigations revealed hypercalcemic crisis, and examination of a bone marrow aspirate was consistent with multiple myeloma. INTERVENTIONS: Conservative treatment was administered for the intestinal obstruction, consisting of food and water deprivation, gastrointestinal decompression, colonic irrigation, intravenous fluid transfusion, anti-inflammatory therapy. Invasive respiratory support was provided after type II respiratory failure occurred and salmon calcitonin was used to reduce the blood calcium level. Further therapy was given by the Department of Hematology and Oncology in our hospital after the diagnosis of multiple myeloma.OUTCOMES: Spontaneous respiration and gastrointestinal function were restored after the correction of hypercalcemia. LESSONS: An appropriate diagnostic approach is needed in emergency practice to identify the paralytic ileus and type II respiratory failure caused by hypercalcemia secondary to multiple myeloma.\n"
+}
