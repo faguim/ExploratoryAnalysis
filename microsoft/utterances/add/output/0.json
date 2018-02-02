@@ -1,6 +1,6 @@
 {
   "error": {
     "code": "BadArgument",
-    "message": "The start token index 94 and end token index 95 are invalid"
+    "message": "Failed to parse example labeling objects. Parameter name: exampleLabelObjects"
   }
 }

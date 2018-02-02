@@ -15,11 +15,18 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.JsonSyntaxException;
+
 public class NCBOAnnotator {
 	private static final String REST_URL = "http://data.bioontology.org";
 	private static final String API_KEY = "1cff5532-d88d-4a43-97a2-729e43dd2a4b";
 	private static String OUTPUT_UTTERANCE_ADD = "microsoft/utterances/add/input/";
 
+	private static final int MAX_LENGTH = 1376;
+	
 	public static void main(String[] args) throws JSONException, IOException {
 		boolean success = (new File(OUTPUT_UTTERANCE_ADD)).mkdirs();
 		if (success) {
@@ -40,6 +47,9 @@ public class NCBOAnnotator {
 			    }
 			    String everything = sb.toString();
 			    System.out.println(everything);
+			    
+			    if (everything.length() > MAX_LENGTH)
+			    	everything = everything.substring(0, MAX_LENGTH);
 			    
 			    String urlParameters;
 			    String textToAnnotate = URLEncoder.encode(everything, "ISO-8859-1");
@@ -140,7 +150,7 @@ public class NCBOAnnotator {
 	}
 
 	public static void createJSONFile(int idPaper, String text, JSONArray mappingsJson) throws JSONException, IOException {
-//    	JSONArray utterances = new JSONArray();
+    	JSONArray utterances = new JSONArray();
 		String intentName = "Description";
 		
 		JSONObject utterance = new JSONObject();
@@ -170,11 +180,20 @@ public class NCBOAnnotator {
 				entityLabels.put(entityLabel);
 			}
 		}
-		System.out.println(utterance);
-//		utterances.put(utterance);
+		utterances.put(utterance);
 		
 		try (FileWriter file = new FileWriter(OUTPUT_UTTERANCE_ADD + idPaper + ".json")) {
-			file.write(utterance.toString());
+			file.write(prettiffy(utterances.toString()));
 		}
+	}
+	
+	public static String prettiffy(String entityResponse) {
+		JsonElement jsonResponse;
+		try {
+			jsonResponse = new JsonParser().parse(entityResponse);
+		} catch (JsonSyntaxException ex) {
+			jsonResponse = new JsonParser().parse("{ \"message\": \"Invalid JSON response\" }");
+		}
+		return new GsonBuilder().setPrettyPrinting().create().toJson(jsonResponse);
 	}
 }

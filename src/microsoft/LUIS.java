@@ -4,9 +4,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Scanner;
@@ -23,18 +21,11 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.json.simple.parser.JSONParser;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.google.gson.JsonSyntaxException;
-import com.sun.jersey.api.client.Client;
-import com.sun.jersey.api.client.ClientResponse;
-import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.api.client.config.ClientConfig;
-import com.sun.jersey.api.client.config.DefaultClientConfig;
-import com.sun.jersey.api.json.JSONConfiguration;
 
 public class LUIS {
 	// Update the host if your LUIS subscription is not in the West US region
@@ -83,8 +74,6 @@ public class LUIS {
 		HttpResponse response = httpclient.execute(request);
 		HttpEntity httpEntityResponse = response.getEntity();
 
-		System.out.println(response.getStatusLine());
-
 		if (httpEntityResponse != null) {
 			String entityResponse = EntityUtils.toString(httpEntityResponse);
 
@@ -93,7 +82,7 @@ public class LUIS {
 				file.createNewFile();
 
 			try (FileOutputStream stream = new FileOutputStream(file)) {
-				entityResponse = pretitffy(entityResponse);
+				entityResponse = prettiffy(entityResponse);
 
 				stream.write(entityResponse.getBytes(UTF8));
 				stream.flush();
@@ -102,7 +91,7 @@ public class LUIS {
 	}
 
 	public static void addUtterance() throws URISyntaxException, FileNotFoundException, IOException {
-		URIBuilder builder = new URIBuilder(path + EXAMPLE);
+		URIBuilder builder = new URIBuilder(path + EXAMPLES);
 
 		URI uri = builder.build();
 		HttpPost request = new HttpPost(uri);
@@ -111,11 +100,12 @@ public class LUIS {
 
 		try (FileInputStream stream = new FileInputStream(INPUT_UTTERANCE_ADD)) {
 			String data = new Scanner(stream, UTF8).useDelimiter("\\A").next();
-			
+			System.out.println(data);
 			StringEntity reqEntity = new StringEntity(data);
 			request.setEntity(reqEntity);
 
 			HttpResponse response = httpclient.execute(request);
+			System.out.println(response);
 			HttpEntity httpEntityResponse = response.getEntity();
 
 			if (httpEntityResponse != null) {
@@ -127,7 +117,7 @@ public class LUIS {
 					file.createNewFile();
 
 				try (FileOutputStream outputStream = new FileOutputStream(file)) {
-					entityResponse = pretitffy(entityResponse);
+					entityResponse = prettiffy(entityResponse);
 
 					outputStream.write(entityResponse.getBytes(UTF8));
 					outputStream.flush();
@@ -139,11 +129,11 @@ public class LUIS {
 	public static void main(String[] args)
 			throws IOException, org.json.simple.parser.ParseException, URISyntaxException {
 		initialize();
-		getUtterances();
+//		getUtterances();
 		addUtterance();
 	}
 
-	public static String pretitffy(String entityResponse) {
+	public static String prettiffy(String entityResponse) {
 		JsonElement jsonResponse;
 		try {
 			jsonResponse = new JsonParser().parse(entityResponse);
@@ -152,4 +142,5 @@ public class LUIS {
 		}
 		return new GsonBuilder().setPrettyPrinting().create().toJson(jsonResponse);
 	}
+	
 }

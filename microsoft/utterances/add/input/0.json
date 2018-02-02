@@ -1,56 +1,43 @@
-{
-	"entityLabels": [
-		{
-			"startCharIndex": 73,
-			"entityName": "MeSH Term",
-			"endCharIndex": 94
-		},
-		{
-			"startCharIndex": 572,
-			"entityName": "MeSH Term",
-			"endCharIndex": 593
-		},
-		{
-			"startCharIndex": 842,
-			"entityName": "MeSH Term",
-			"endCharIndex": 863
-		},
-		{
-			"startCharIndex": 311,
-			"entityName": "MeSH Term",
-			"endCharIndex": 319
-		},
-		{
-			"startCharIndex": 1577,
-			"entityName": "MeSH Term",
-			"endCharIndex": 1585
-		},
-		{
-			"startCharIndex": 720,
-			"entityName": "MeSH Term",
-			"endCharIndex": 730
-		},
-		{
-			"startCharIndex": 880,
-			"entityName": "MeSH Term",
-			"endCharIndex": 883
-		},
-		{
-			"startCharIndex": 889,
-			"entityName": "MeSH Term",
-			"endCharIndex": 893
-		},
-		{
-			"startCharIndex": 1107,
-			"entityName": "MeSH Term",
-			"endCharIndex": 1112
-		},
-		{
-			"startCharIndex": 1318,
-			"entityName": "MeSH Term",
-			"endCharIndex": 1328
-		}
-	],
-	"intentName": "Description",
-	"text": "RATIONALE: Paralytic ileus is characterized by the signs and symptoms of intestinal obstruction but without any mechanical lesions in the intestinal lumen. Several medical and surgical conditions can lead to this ailment, such as electrolyte disturbances that impair intestinal motility. However, hypercalcemia secondary to multiple myeloma as a major cause of paralytic ileus has rarely been reported. PATIENT CONCERNS: The patient got severe constipation with difficulty in the passage of both gas and feces for 7 days. DIAGNOSES: The patient was diagnosed with a small intestinal obstruction initially and then developed type II respiratory failure. Investigations revealed hypercalcemic crisis, and examination of a bone marrow aspirate was consistent with multiple myeloma. INTERVENTIONS: Conservative treatment was administered for the intestinal obstruction, consisting of food and water deprivation, gastrointestinal decompression, colonic irrigation, intravenous fluid transfusion, anti-inflammatory therapy. Invasive respiratory support was provided after type II respiratory failure occurred and salmon calcitonin was used to reduce the blood calcium level. Further therapy was given by the Department of Hematology and Oncology in our hospital after the diagnosis of multiple myeloma.OUTCOMES: Spontaneous respiration and gastrointestinal function were restored after the correction of hypercalcemia. LESSONS: An appropriate diagnostic approach is needed in emergency practice to identify the paralytic ileus and type II respiratory failure caused by hypercalcemia secondary to multiple myeloma.\n"
-}
+[
+  {
+    "entityLabels": [
+      {
+        "startCharIndex": 66,
+        "entityName": "MeSH Term",
+        "endCharIndex": 73
+      },
+      {
+        "startCharIndex": 380,
+        "entityName": "MeSH Term",
+        "endCharIndex": 387
+      },
+      {
+        "startCharIndex": 525,
+        "entityName": "MeSH Term",
+        "endCharIndex": 532
+      },
+      {
+        "startCharIndex": 651,
+        "entityName": "MeSH Term",
+        "endCharIndex": 661
+      },
+      {
+        "startCharIndex": 907,
+        "entityName": "MeSH Term",
+        "endCharIndex": 915
+      },
+      {
+        "startCharIndex": 1189,
+        "entityName": "MeSH Term",
+        "endCharIndex": 1203
+      },
+      {
+        "startCharIndex": 1219,
+        "entityName": "MeSH Term",
+        "endCharIndex": 1226
+      }
+    ],
+    "intentName": "Description",
+    "text": "\n1. G Ital Nefrol. 2018 Feb;35(1). pii: 2018-vol1.\n\n[Bardet-Biedl syndrome and Kidney failure: a case report].\n\n[Article in Italian]\n\nTattoli F(1), Falconi D(1), Bottaro C(1), Gherzi M(1), Marazzi F(1), Marengo\nM(1), Serra I(1), Tamagnone M(1), Formica M(1).\n\nAuthor information: \n(1)S.C. Nefrologia e Dialisi ASLCN1, Ospedali di Ceva, Mondovì, Savigliano e\nSaluzzo.\n\nBardet-Biedl Syndrome (BBS) is a rare multi-systemic disease with autosomal\nrecessive transmission. BBS was at first considered to be homogeneous as for its \ngenetics, but subsequent studies have shown an extensive gene variability.\nCurrently, 21 genes (BBS1-21) present on different chromosomes have been mapped: \nthese genes are responsible for BBS phenotypes and they show a great\nheterogeneity of mutations.The most common genes are BBS1 (locus 11q13) and\nBBS10.We show here the case of a 50 year old patient with BBS. Medical History:\nretinitis pigmentosa at 4 years of age evolved to complete blindness, generalized\nepilepsy crises, poly-syndactyly, left-hand malformation. In April 1986 developed\nan epileptic episode: on that occasion Chronic Kidney Failure (CKF) diagnosis and\nstarting of haemodialysis. In 1989, hospitalization for epileptic seizures. In\n2009 the patient underwent kidney transplantation from deceased donor.\nImmunosuppressive initial protocol: Basiliximab, Azathioprine, Tacrolimu"
+  }
+]
