@@ -1,11 +1,16 @@
+import java.io.IOException;
+
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.json.JSONException;
+import org.xml.sax.SAXException;
 
 import crawler.PubMed;
 import ncbo.NCBOAnnotator;
 
 public class Experiment {
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
 		try {
 			//Get papers from PubMed.
 			PubMed.fetchByTerm("respiratory+failure");
