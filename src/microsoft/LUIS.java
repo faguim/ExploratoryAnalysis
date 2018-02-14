@@ -1,20 +1,12 @@
 package microsoft;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Scanner;
 
 import javax.ws.rs.core.MediaType;
@@ -44,13 +36,13 @@ public class LUIS {
 	final static String LUIS_VERSION = "/versions/{app_version}";
 
 	// Enter information about your LUIS application and key below
-	static final String APP_ID = "c9615472-e794-4d9d-be08-11ae4467c171";
+	static final String APP_ID = "69b86786-213a-45ea-88ad-d74d7c5d5abd";
 	static final String APP_VERSION = "0.1";
 	static final String LUIS_PROGRAMMATIC_ID = "0f03533f6b4e4e5b9d6dc33ef75659a4";
 
 	// File names for utterance and result files
 	static final String INPUT_UTTERANCE_ADD = "microsoft/utterances/add/input/";
-	static final String OUTPUT_UTTERANCES_ADD = "microsoft/utterances/add/output/0.json";
+	static final String OUTPUT_UTTERANCES_ADD = "microsoft/utterances/add/output/";
 	static final String OUTPUT_UTTERANCES_GET = "microsoft/utterances/get/output.json";
 
 	static final String UTF8 = "UTF-8";
@@ -62,7 +54,6 @@ public class LUIS {
 	final static String APP_INFO = "/";
 	final static String INTENTS = "/intents";
 	final static String ENTITIES = "/entities";
-
 
 	static String path;
 	static HttpClient httpclient;
@@ -103,62 +94,93 @@ public class LUIS {
 		}
 	}
 
-	public static void addUtterance() throws URISyntaxException, FileNotFoundException, IOException, InterruptedException {
-		int nFiles = new File(INPUT_UTTERANCE_ADD).list().length;
-		System.out.println(nFiles);
-//		try (FileInputStream stream = new FileInputStream(INPUT_UTTERANCE_ADD)) {
-//			String data = new Scanner(stream, UTF8).useDelimiter("\\A").next();
-//			JsonArray utterances = new JsonParser().parse(data).getAsJsonArray();
-//			
-//			for (JsonElement jsonElement : utterances) {
-//				JsonObject utterance = jsonElement.getAsJsonObject();
-//				JsonObject intent = new JsonObject();
-//
-//				intent.addProperty("name", utterance.get("intentName").getAsString());
-//				HttpResponse response = post(INTENTS, intent.toString());
-//				System.out.println(response);
-//				
-//				
-//				JsonArray entityLabels = utterance.getAsJsonArray("entityLabels");
-//				for (JsonElement entityElement : entityLabels) {
-//					JsonObject entityJson = entityElement.getAsJsonObject();
-//					
-//					JsonObject entity = new JsonObject();
-//					entity.addProperty("name", entityJson.get("entityName").getAsString());
-//					System.out.println(post(ENTITIES, entity.toString()));
+	public static void addUtterance()
+			throws URISyntaxException, FileNotFoundException, IOException, InterruptedException {
+
+		String[] files = new File(INPUT_UTTERANCE_ADD).list();
+		for (String inputFile : files) {
+			System.out.println(inputFile);
+			try (FileInputStream stream = new FileInputStream(INPUT_UTTERANCE_ADD + inputFile)) {
+				String data = new Scanner(stream, UTF8).useDelimiter("\\A").next();
+				JsonArray utterances = new JsonParser().parse(data).getAsJsonArray();
+
+				boolean allIntentsAdded = true;
+				boolean allEntitiesAdded = true;
+
+				for (JsonElement utteranceElement : utterances) {
+					JsonObject utterance = utteranceElement.getAsJsonObject();
+					JsonObject intent = new JsonObject();
+
+					intent.addProperty("name", utterance.get("intentName").getAsString());
+
+					if (!addIntent(intent))
+						allIntentsAdded = false;
+
+					JsonArray entityLabels = utterance.getAsJsonArray("entityLabels");
+					for (JsonElement entityElement : entityLabels) {
+						JsonObject entityJson = entityElement.getAsJsonObject();
+
+						JsonObject entity = new JsonObject();
+						entity.addProperty("name", entityJson.get("entityName").getAsString());
+						if (!addEntity(entity))
+							allEntitiesAdded = false;
+					}
+				}
+
+//				if (allEntitiesAdded && allIntentsAdded) {
+					HttpResponse response = post(EXAMPLES, data);
+
+					HttpEntity httpEntityResponse = response.getEntity();
+
+					if (httpEntityResponse != null) {
+
+						String entityResponse = EntityUtils.toString(httpEntityResponse);
+
+						File outputFile = new File(OUTPUT_UTTERANCES_ADD + inputFile);
+						if (!outputFile.exists())
+							outputFile.createNewFile();
+
+						try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
+							entityResponse = prettiffy(entityResponse);
+
+							outputStream.write(entityResponse.getBytes(UTF8));
+							outputStream.flush();
+						}
+					}
 //				}
-//			}
-//
-//			HttpResponse response = post(EXAMPLES, data);
-//
-//			HttpEntity httpEntityResponse = response.getEntity();
-//
-//			if (httpEntityResponse != null) {
-//				
-//				String entityResponse = EntityUtils.toString(httpEntityResponse);
-//
-//				File file = new File(OUTPUT_UTTERANCES_ADD);
-//				if (!file.exists())
-//					file.createNewFile();
-//
-//				try (FileOutputStream outputStream = new FileOutputStream(file)) {
-//					entityResponse = prettiffy(entityResponse);
-//
-//					outputStream.write(entityResponse.getBytes(UTF8));
-//					outputStream.flush();
-//				}
-//			}
-//		}
+
+			}
+		}
+
 	}
 
-	public static HttpResponse post(String endpoint, String data) throws URISyntaxException, ClientProtocolException, IOException {
+	public static boolean addEntity(JsonObject entity) throws ClientProtocolException, URISyntaxException, IOException {
+		HttpResponse response = post(ENTITIES, entity.toString());
+
+		if (response.getStatusLine().getStatusCode() == 201)
+			return true;
+		else
+			return false;
+	}
+
+	public static boolean addIntent(JsonObject intent) throws FileNotFoundException, IOException, URISyntaxException {
+		HttpResponse response = post(INTENTS, intent.toString());
+
+		if (response.getStatusLine().getStatusCode() == 201)
+			return true;
+		else
+			return false;
+	}
+
+	public static HttpResponse post(String endpoint, String data)
+			throws URISyntaxException, ClientProtocolException, IOException {
 		httpclient = HttpClients.createDefault();
 
 		URIBuilder builder = new URIBuilder(path + endpoint);
 		URI uri = builder.build();
 		HttpPost request = new HttpPost(uri);
 		request.setHeader("Ocp-Apim-Subscription-Key", LUIS_PROGRAMMATIC_ID);
-		request.setHeader("Content-Type", MediaType.APPLICATION_JSON);		
+		request.setHeader("Content-Type", MediaType.APPLICATION_JSON);
 
 		StringEntity reqEntity = new StringEntity(data);
 
@@ -170,7 +192,7 @@ public class LUIS {
 	public static void main(String[] args)
 			throws IOException, org.json.simple.parser.ParseException, URISyntaxException, InterruptedException {
 		initialize();
-//		getUtterances();
+		// getUtterances();
 		addUtterance();
 	}
 
@@ -183,5 +205,5 @@ public class LUIS {
 		}
 		return new GsonBuilder().setPrettyPrinting().create().toJson(jsonResponse);
 	}
-	
+
 }
