@@ -33,7 +33,8 @@ public class NCBOAnnotator {
 	private static final String REST_URL = "http://data.bioontology.org";
 	private static final String API_KEY = "1cff5532-d88d-4a43-97a2-729e43dd2a4b";
 	private static String OUTPUT_UTTERANCE_ADD = "microsoft/utterances/add/input/";
-
+	private static String PAPERS_JSON = "papers/json/";
+	
 	private static final int MAX_LENGTH = 1376;
 
 	public static void initiliaze() {
@@ -43,13 +44,13 @@ public class NCBOAnnotator {
 	public static void main(String[] args) throws JSONException, IOException {
 		initiliaze();
 		// int nFiles = 1;
-		File folder = new File("papers/json");
+		File folder = new File(PAPERS_JSON);
 		File[] listOfFiles = folder.listFiles();
 
 		for (int i = 0; i < listOfFiles.length; i++) {
 			System.out.println("File " + listOfFiles[i].getName());
 
-			try (FileInputStream stream = new FileInputStream("papers/json/" + listOfFiles[i].getName())) {
+			try (FileInputStream stream = new FileInputStream(PAPERS_JSON + listOfFiles[i].getName())) {
 				String everything = new Scanner(stream, "UTF-8").useDelimiter("\\A").next();
 				JsonObject paperJson = new JsonParser().parse(everything).getAsJsonObject();
 

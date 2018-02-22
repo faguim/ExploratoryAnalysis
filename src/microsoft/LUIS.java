@@ -37,7 +37,7 @@ public class LUIS {
 
 	// Enter information about your LUIS application and key below
 	static final String APP_ID = "69b86786-213a-45ea-88ad-d74d7c5d5abd";
-	static final String APP_VERSION = "0.1";
+	static final String APP_VERSION = "0.2";
 	static final String LUIS_PROGRAMMATIC_ID = "0f03533f6b4e4e5b9d6dc33ef75659a4";
 
 	// File names for utterance and result files
@@ -68,30 +68,44 @@ public class LUIS {
 	}
 
 	public static void getUtterances() throws URISyntaxException, ClientProtocolException, IOException {
-		URIBuilder builder = new URIBuilder(path + EXAMPLES);
-
-		URI uri = builder.build();
-		HttpGet request = new HttpGet(uri);
-		request.setHeader("Ocp-Apim-Subscription-Key", LUIS_PROGRAMMATIC_ID);
-		request.setHeader("Content-Type", MediaType.APPLICATION_JSON);
-
-		HttpResponse response = httpclient.execute(request);
+		HttpResponse response = get(EXAMPLES);
 		HttpEntity httpEntityResponse = response.getEntity();
 
-		if (httpEntityResponse != null) {
-			String entityResponse = EntityUtils.toString(httpEntityResponse);
+		JsonArray utterances = new JsonParser().parse(EntityUtils.toString(httpEntityResponse)).getAsJsonArray();
 
-			File file = new File(OUTPUT_UTTERANCES_GET);
-			if (!file.exists())
-				file.createNewFile();
+		int predicted = 0;
 
-			try (FileOutputStream stream = new FileOutputStream(file)) {
-				entityResponse = prettiffy(entityResponse);
+		for (JsonElement utterance : utterances) {
+			JsonArray entityLabels = utterance.getAsJsonObject().get("entityLabels").getAsJsonArray();
+			JsonArray entityPredictions = utterance.getAsJsonObject().get("entityPredictions").getAsJsonArray();
+			int id = utterance.getAsJsonObject().get("id").getAsInt();
 
-				stream.write(entityResponse.getBytes(UTF8));
-				stream.flush();
+			if (entityPredictions.size() != entityLabels.size()) {
+				System.out.println(utterance);
+				System.out.println("Input: "+ entityLabels);
+				System.out.println("Predicted: "+entityPredictions);
 			}
+			predicted += (entityPredictions.size() - entityLabels.size());
+
 		}
+
+				System.out.println(predicted);
+		//		utterances.
+		//		
+		//		if (httpEntityResponse != null) {
+		//			String entityResponse = EntityUtils.toString(httpEntityResponse);
+		//
+		//			File file = new File(OUTPUT_UTTERANCES_GET);
+		//			if (!file.exists())
+		//				file.createNewFile();
+		//
+		//			try (FileOutputStream stream = new FileOutputStream(file)) {
+		//				entityResponse = prettiffy(entityResponse);
+		//
+		//				stream.write(entityResponse.getBytes(UTF8));
+		//				stream.flush();
+		//			}
+		//		}
 	}
 
 	public static void addUtterance()
@@ -127,27 +141,27 @@ public class LUIS {
 					}
 				}
 
-//				if (allEntitiesAdded && allIntentsAdded) {
-					HttpResponse response = post(EXAMPLES, data);
+				//				if (allEntitiesAdded && allIntentsAdded) {
+				HttpResponse response = post(EXAMPLES, data);
 
-					HttpEntity httpEntityResponse = response.getEntity();
+				HttpEntity httpEntityResponse = response.getEntity();
 
-					if (httpEntityResponse != null) {
+				if (httpEntityResponse != null) {
 
-						String entityResponse = EntityUtils.toString(httpEntityResponse);
+					String entityResponse = EntityUtils.toString(httpEntityResponse);
 
-						File outputFile = new File(OUTPUT_UTTERANCES_ADD + inputFile);
-						if (!outputFile.exists())
-							outputFile.createNewFile();
+					File outputFile = new File(OUTPUT_UTTERANCES_ADD + inputFile);
+					if (!outputFile.exists())
+						outputFile.createNewFile();
 
-						try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
-							entityResponse = prettiffy(entityResponse);
+					try (FileOutputStream outputStream = new FileOutputStream(outputFile)) {
+						entityResponse = prettiffy(entityResponse);
 
-							outputStream.write(entityResponse.getBytes(UTF8));
-							outputStream.flush();
-						}
+						outputStream.write(entityResponse.getBytes(UTF8));
+						outputStream.flush();
 					}
-//				}
+				}
+				//				}
 
 			}
 		}
@@ -189,11 +203,25 @@ public class LUIS {
 		return response;
 	}
 
+	public static HttpResponse get(String endpoint)
+			throws URISyntaxException, ClientProtocolException, IOException {
+		httpclient = HttpClients.createDefault();
+
+		URIBuilder builder = new URIBuilder(path + endpoint);
+		URI uri = builder.build();
+		HttpGet request = new HttpGet(uri);
+		request.setHeader("Ocp-Apim-Subscription-Key", LUIS_PROGRAMMATIC_ID);
+		request.setHeader("Content-Type", MediaType.APPLICATION_JSON);
+
+		HttpResponse response = httpclient.execute(request);
+		return response;
+	}
+
 	public static void main(String[] args)
 			throws IOException, org.json.simple.parser.ParseException, URISyntaxException, InterruptedException {
 		initialize();
-		// getUtterances();
-		addUtterance();
+		getUtterances();
+		//		addUtterance();
 	}
 
 	public static String prettiffy(String entityResponse) {
