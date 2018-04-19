@@ -1,6 +1,30 @@
-{
-  "error": {
-    "code": "BadArgument",
-    "message": "Failed to parse example labeling objects. Parameter name: exampleLabelObjects"
+[
+  {
+    "value": {
+      "UtteranceText": "to study the effect of extrinsic positive end-expiratory pressure(peepe) on work of breathing in chronic obstructive pulmonary disease (copd) patients and its mechanism.",
+      "ExampleId": -13562896
+    },
+    "hasError": false
+  },
+  {
+    "hasError": true,
+    "error": {
+      "code": "FAILED",
+      "message": "10 ventilated patients [4 males and 6 females with mean age of (70.1 +/- 5.5) years] with exacerbation of COPD were admitted into the study. All the patients\u0027 cardiopulmonary functions were stable, and they could receive pressure support ventilation (PSV). Patients with sever heart dysfunction, hepatic dysfunction, renal dysfunction or fever were ruled out. Each patient had an esophagus balloon pressure sensor inserted, and the esophagus balloon was properly positioned using \"occlusion test\". Flow sensor was placed at the end of tracheal tube opening. Then esophagus balloon pressure sensor and flow sensor were connected with Bicore CP-100 pulmonary monitor. Dynamic intrinsic positive end-expiratory pressure (PEEPi, dyn), difference of esophagus pressure (dPes), work of breathing patient (WOBp), work of breathing ventilator (WOBv), pressure time product (PTP), tidal volume (Vt), respiratory rate (RR), minute ventilation (MV), peak inspiratory flow rate (PIFR), peak expiratory flow rate (PEFR), expiratory airway resistance (Rawe), fraction of inspiration (Ti/Ttot) and so on were measured. PEEPi,dyn was measured by esophagus balloon technique. Electrocardiogram and noninvasive blood pressure modes were added to HP M1165A monitor. Heart rate (HR) and blood pressure (BP) were also measured. Arterial blood was analyzed to measure pH, partial pressure of oxygen in arterial blood (PaO(2)), partial pressure of carbon dioxide in arterial blood (PaCO(2)) and saturation of arterial blood oxygen (SaO(2)). At first, PEEPi, dyn was measured when PEEPe was zero, which was called PEEPi, dynz and was set as baseline. Then PEEPe was set randomly, which was 0%, 40%, 60%, 80% and 100% of PEEPi, dynz respectively. Other parameters remained stable. All the indexes were measured 30 minutes after the level of PEEPe was changed.. Error: The start token index 164 and end token index 164 are invalid"
+    }
+  },
+  {
+    "hasError": true,
+    "error": {
+      "code": "FAILED",
+      "message": "WOBp decreased as PEEPe increased, from (1.08 +/- 0.49) J/L of PEEPe-0% of PEEPi,dynz to (0.57 +/- 0.32) J/L of PEEPe-100% of PEEPi, dynz, and significant difference was found between each level of PEEPe and the baseline (P \u003c 0.01). But we didn\u0027t find significant difference between PEEPe-80% of PEEPi,dynz and PEEPe-100% of PEEPi, dynz. WOBv increased significantly as PEEPe increased, from (1.50 +/- 0.47) J/L of PEEPe-0% of PEEPi, dynz to (1.82 +/- 0.56) J/L of PEEPe-80% of PEEPi, dynz and (1.85 +/- 0.48) J/L of PEEPe-100% of PEEPi,dynz(P \u003c 0.01). The total WOB (WOBp + WOBv) remained steady. PTP trended to decrease, from (153.6 +/- 76.8) cm H(2)O x s x m(-1) of PEEPe-0% of PEEPi, dynz to (86.9 +/- 45.9) cm H(2)O x s x m(-1) of PEEPe-100% of PEEPi, dynz; the difference of PTP between PEEPe-40% of PEEPi,dynz and PEEPe-0% of PEEPi, dynz was significant(P \u003c 0.05), the differences between other levels of PEEPe and PEEPe-0% of PEEPi, dynz were very significant (P \u003c 0.01), but no significant difference was found between PEEPe-80% of PEEPi, dynz and PEEPe-100% of PEEPi, dynz. PEEPi,dyn also decreased significantly as PEEPe increased, from (7.70 +/- 1.42) cm H(2)O of PEEPe-0% of PEEPi, dynz to (2.10 +/- 0.57) cm H(2)O of PEEPe-100% of PEEPi, dynz, very significant differences were found between each level of PEEPe and the baseline (P \u003c 0.01). Significant positive linear correlation was found between DeltaWOBp and DeltaPEEPi, dyn were(r \u003d 0.609, P \u003c 0.01, n \u003d 10). dPes decreased as PEEPe increased, from (15.20 +/- 4.16) cm H(2)O of PEEPe-0% of PEEPi, dynz to (8.20 +/- 4.13) cm H(2)O of PEEPe-100% of PEEPi, dynz, and very significant differences were found between each level of PEEPe and the baseline (P \u003c 0.01). But the difference between PEEPe-80% of PEEPi, dynz and PEEPe-100% of PEEPi, dynz wasn\u0027t significant, even dPes of PEEPe-100% of PEEPi, dynz was higher than that of PEEPe-80% of PEEPi, dynz. Vt didn\u0027t change markedly. RR, MV and f/Vt increased slightly. Both PIFR and PEFR didn\u0027t change markedly. At the same time, HR, BP and blood gas analysis were investigated, but no significant change was found.. Error: The start token index 642 and end token index 642 are invalid"
+    }
+  },
+  {
+    "value": {
+      "UtteranceText": "peepe can reduce wobp significantly and improve the coordination between the patient and ventilator. it is shown that decrement of pressure difference between alveolar and central airway leads to decrement of wobp.",
+      "ExampleId": -13562897
+    },
+    "hasError": false
   }
-}
+]
