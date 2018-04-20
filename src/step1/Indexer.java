@@ -16,6 +16,7 @@ import org.apache.lucene.store.LockObtainFailedException;
 import org.apache.lucene.util.Version;
 
 public class Indexer {
+	
 	public static void main(String[] args) throws CorruptIndexException, LockObtainFailedException, IOException {
 		String indexDir = "/home/fagner/TREC/indexes/pmc-00";
 		String dataDir = "/home/fagner/TREC/pmc-00/00";
@@ -54,6 +55,7 @@ public class Indexer {
 	public Indexer(String indexDir) throws CorruptIndexException, LockObtainFailedException, IOException {
 		Directory dir = FSDirectory.open(new File(indexDir));
 		writer = new IndexWriter(dir, new StandardAnalyzer(Version.LUCENE_30), true, IndexWriter.MaxFieldLength.UNLIMITED);
+		
 	}
 	
 	public void close() throws CorruptIndexException, IOException {
