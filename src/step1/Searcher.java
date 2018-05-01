@@ -17,7 +17,7 @@ import org.apache.lucene.util.Version;
 
 public class Searcher {
 	public static void main(String[] args) throws IOException, ParseException {
-		String indexDir = "/home/fagner/TREC/indexes/pmc-00";
+		String indexDir = "/home/fagner/TREC/indexes/";
 		String q = "abdominal+pain";
 		
 		search(indexDir, q);
