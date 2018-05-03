@@ -1,12 +1,8 @@
 package step1;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
 
 import javax.xml.bind.UnmarshalException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -14,13 +10,9 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.commons.digester3.Digester;
-import org.apache.commons.digester3.binder.DigesterLoadingException;
-import org.apache.jena.shared.JenaException;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
-
 
 public class XMLtoLuceneDocument {
 	Digester dig;
@@ -34,7 +26,6 @@ public class XMLtoLuceneDocument {
 		
 		SAXParser p = spf.newSAXParser();
 		
-		
 		dig = new Digester(p);
 
 		dig.addObjectCreate("article", XMLtoLuceneDocument.class);
@@ -45,37 +36,37 @@ public class XMLtoLuceneDocument {
 	    dig.addBeanPropertySetter("article/front/article-meta/title-group/article-title", "articleTitle");
 		dig.addBeanPropertySetter( "article/front/article-meta/abstract/p", "abstractArticle");
 		
+		dig.addCallMethod("article/front/article-meta/kwd-group/kwd", "addKeywords", 1);
+		dig.addCallParam("article/front/article-meta/kwd-group/kwd", 0);
+
 		dig.addSetNext("article", "populateDocument");
-	}
-	
-	public synchronized Document getDocument(File f) throws UnmarshalException, IOException, SAXException {
-		dig.parse(f);
-		doc.add(new Field("content", new FileReader(f)));
-		return doc;
 	}
 	
 	public void populateDocument(Article article) {
 		doc = new Document();
-		doc.add(new Field("article-title", article.getArticleTitle(), Field.Store.YES, Field.Index.NOT_ANALYZED));
-		doc.add(new Field("article-type", article.getArticleType(), Field.Store.YES, Field.Index.NOT_ANALYZED));
-		doc.add(new Field("abstract", article.getAbstractArticle(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+		doc.add(new Field("title", article.getArticleTitle(), Field.Store.YES, Field.Index.ANALYZED));
+		doc.add(new Field("type", article.getArticleType(), Field.Store.YES, Field.Index.ANALYZED));
+		doc.add(new Field("abstract", article.getAbstractArticle(), Field.Store.YES, Field.Index.ANALYZED));
+		doc.add(new Field("keywords", article.getKeywords().toString(), Field.Store.YES, Field.Index.ANALYZED));
 	}
 	
-	public static Document parse(String path) throws ParserConfigurationException, SAXException, UnmarshalException, IOException {
+	public static Document parse(File f) throws ParserConfigurationException, SAXException, UnmarshalException, IOException {
 		XMLtoLuceneDocument handler = new XMLtoLuceneDocument();
 
-		Document doc = handler.getDocument(new File(path));
+		handler.dig.parse(f);
+		doc.add(new Field("content", new FileReader(f)));
+		doc.add(new Field("filename", f.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+		doc.add(new Field("fullpath", f.getCanonicalPath(), Field.Store.YES, Field.Index.NOT_ANALYZED));
+		
 		return doc;
 	}
 	
-	public static void main(String[] args) throws ParserConfigurationException, SAXException, IOException {
-		XMLtoLuceneDocument handler = new XMLtoLuceneDocument();
-
+	public static void main(String[] args) {
 		Document doc = null;
 		try {
-			doc = handler.getDocument(new File("/home/fagner/TREC/papers/pmc-01/09/2771650.nxml"));
+			doc = parse(new File("/home/fagner/TREC/papers/pmc-00/20/2374409.nxml"));
 			System.out.println(doc);
-		} catch (UnmarshalException e) {
+		} catch (UnmarshalException | IOException | ParserConfigurationException | SAXException e) {
 			e.printStackTrace();
 		}
 	}

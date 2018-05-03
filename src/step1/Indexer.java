@@ -23,6 +23,8 @@ import org.xml.sax.SAXParseException;
 
 public class Indexer {
 	private static String INDEX_DIR = "/home/fagner/TREC/indexes";
+//	private static String INDEX_DIR = "/home/fagner/TREC/indexes3";
+
 	private static String PAPER_DIR = "/home/fagner/TREC/papers/";
 
 
@@ -65,7 +67,6 @@ public class Indexer {
 
 	public int index(String dataDir, FileFilter filter) throws IOException {
 		File[] files = new File(dataDir).listFiles();
-
 		for (File f : files) {
 			if(!f.isDirectory() && !f.isHidden() && f.exists() && f.canRead() && (filter == null || filter.accept(f))) {
 				indexFile(f);
@@ -91,22 +92,13 @@ public class Indexer {
 		try {
 			System.out.println("Indexing " + f.getCanonicalPath());
 			Document doc;
-			doc = getDocument(f);
+			doc = XMLtoLuceneDocument.parse(f);
 			if (doc!=null)
 				writer.addDocument(doc);
 		} catch (UnmarshalException | IOException | ParserConfigurationException | SAXException e) {
 			e.printStackTrace();
 		}
 		
-	}
-
-	public Document getDocument(File f) throws ParserConfigurationException, SAXException, IOException, UnmarshalException {
-		Document doc = XMLtoLuceneDocument.parse(f.getCanonicalPath());
-		doc.add(new Field("contents", new FileReader(f)));
-		doc.add(new Field("filename", f.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED));
-		doc.add(new Field("fullpath", f.getCanonicalPath(), Field.Store.YES, Field.Index.NOT_ANALYZED));
-
-		return doc;
 	}
 
 	private static class TextFilesFilter implements FileFilter {

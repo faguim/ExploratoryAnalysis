@@ -7,6 +7,7 @@ public class Article {
 	private String articleTitle;
 	private String articleType;
 	private String abstractArticle = "";
+	private List<String> keywords = new ArrayList<>();
 	private List<Section> sections = new ArrayList<>();
 	
 	public void addSection(Section section) {
@@ -34,12 +35,26 @@ public class Article {
 	}
 
 	public void setAbstractArticle(String abstractArticle) {
-		this.abstractArticle = abstractArticle;
+		this.abstractArticle += abstractArticle + " ";
 	}
+	
+	
 
 	@Override
 	public String toString() {
 		return "Article [articleTitle=" + articleTitle + ", articleType=" + articleType + ", abstractArticle="
 				+ abstractArticle + "]";
+	}
+
+	public void addKeywords(String keyword) {
+		this.getKeywords().add(keyword);
+	}
+
+	public List<String> getKeywords() {
+		return keywords;
+	}
+
+	public void setKeywords(List<String> keywords) {
+		this.keywords = keywords;
 	}
 }
