@@ -3,12 +3,16 @@ package step1;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
+
+@XmlRootElement
 public class Article {
-	private String articleTitle;
-	private String articleType;
-	private String abstractArticle = "";
-	private List<String> keywords = new ArrayList<>();
-	private List<Section> sections = new ArrayList<>();
+	@XmlAttribute private String articleTitle;
+	@XmlAttribute private String articleType;
+	@XmlAttribute private String abstractArticle = "";
+	@XmlAttribute private List<String> keywords = new ArrayList<>();
+	@XmlAttribute private List<Section> sections = new ArrayList<>();
 	
 	public void addSection(Section section) {
 		this.sections.add(section);

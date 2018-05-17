@@ -34,11 +34,49 @@ public class NCBOAnnotator {
 	private static final String API_KEY = "1cff5532-d88d-4a43-97a2-729e43dd2a4b";
 	private static String OUTPUT_UTTERANCE_ADD = "microsoft/utterances/add/input/";
 	private static String PAPERS_JSON = "papers/json/";
-	
+
 	private static final int MAX_LENGTH = 1376;
 
 	public static void initiliaze() {
 		(new File(OUTPUT_UTTERANCE_ADD)).mkdirs();
+	}
+
+	public static JsonArray annotate(String inputText) {
+		String urlParameters;
+
+		urlParameters = "text=" + inputText + "&ontologies=MESH" + "&exclude_numbers=true"
+				+ "&exclude_synonyms=true" + "&longest_only=false";
+		
+		String response = post(REST_URL + "/annotator", urlParameters);
+		
+		JsonArray responseArray = (JsonArray) new JsonParser().parse(response);
+		JsonArray meshTerms = new JsonArray();
+		
+		for (int i = 0; i < responseArray.size(); i++) {
+			JsonObject mappedEntity = (JsonObject) responseArray.get(i);
+			
+			JsonObject annotatedClass = mappedEntity.getAsJsonObject("annotatedClass");
+			String id = annotatedClass.get("@id").getAsString();
+			
+			JsonArray annotations = mappedEntity.getAsJsonArray("annotations");
+
+			for (int j = 0; j < annotations.size(); j++) {
+				String startCharIndex = ( (JsonObject )annotations.get(j)).get("from").getAsString();
+				String endCharIndex = ( (JsonObject )annotations.get(j)).get("to").getAsString();
+				String text = ((JsonObject) annotations.get(j)).get("text").getAsString();
+
+				JsonObject entityLabel = new JsonObject();
+
+				entityLabel.addProperty("uri", id);
+				entityLabel.addProperty("startCharIndex", Integer.valueOf(startCharIndex) - 1);
+				entityLabel.addProperty("endCharIndex", Integer.valueOf(endCharIndex) - 1);
+				entityLabel.addProperty("prefLabel", text);
+				
+				meshTerms.add(entityLabel);
+			}
+		}
+
+		return meshTerms;
 	}
 
 	public static void main(String[] args) throws JSONException, IOException {
@@ -68,7 +106,7 @@ public class NCBOAnnotator {
 
 					if (!textToAnnotate.isEmpty()) {
 						String urlParameters;
-						
+
 						urlParameters = "text=" + textToAnnotate + "&ontologies=MESH" + "&exclude_numbers=true"
 								+ "&exclude_synonyms=true" + "&longest_only=true";
 						String response = post(REST_URL + "/annotator", urlParameters);
@@ -76,7 +114,7 @@ public class NCBOAnnotator {
 						map.put("response", responseJson);
 						maps.add(map);
 					}
-					
+
 
 				}
 				createJSONFile(listOfFiles[i].getName(), maps);

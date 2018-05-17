@@ -19,14 +19,11 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.LockObtainFailedException;
 import org.apache.lucene.util.Version;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 public class Indexer {
-	private static String INDEX_DIR = "/home/fagner/TREC/indexes";
-//	private static String INDEX_DIR = "/home/fagner/TREC/indexes3";
+	private static String INDEX_DIR = "/home/fagner/Doutorado/step1/indexes";
 
-	private static String PAPER_DIR = "/home/fagner/TREC/papers/";
-
+	private static String PAPER_DIR = "/home/fagner/Doutorado/papers/";
 
 	public static void main(String[] args) throws CorruptIndexException, LockObtainFailedException, IOException, ParserConfigurationException, SAXException {
 		long start = System.currentTimeMillis();
@@ -34,7 +31,6 @@ public class Indexer {
 		int numIndexed = 0;
 
 		int nDir = new File(PAPER_DIR).listFiles().length;
-
 
 		try {
 			for (int i = 0; i < nDir; i++) {
