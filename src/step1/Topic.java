@@ -1,17 +1,11 @@
 package step1;
 
 public class Topic {
-	private int number;
+	private Integer number;
 	private String type;
 	private String description;
 	private String summary;
 	
-	public int getNumber() {
-		return number;
-	}
-	public void setNumber(int number) {
-		this.number = number;
-	}
 	public String getType() {
 		return type;
 	}
@@ -33,7 +27,13 @@ public class Topic {
 
 	@Override
 	public String toString() {
-		return "Topic [number=" + number + ", type=" + type + ", description=" + description + ", summary=" + summary
+		return "Topic [number=" + getNumber() + ", type=" + type + ", description=" + description + ", summary=" + summary
 				+ "]";
+	}
+	public Integer getNumber() {
+		return number;
+	}
+	public void setNumber(Integer number) {
+		this.number = number;
 	}
 }

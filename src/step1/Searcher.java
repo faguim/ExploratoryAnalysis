@@ -1,6 +1,7 @@
 package step1;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,8 @@ import org.apache.lucene.util.Version;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import au.com.bytecode.opencsv.CSVWriter;
+
 public class Searcher {
 	private static final Version LUCENE_VERSION = Version.LUCENE_30;
 
@@ -46,21 +49,35 @@ public class Searcher {
 	private static String INDEX_DIR = "/home/fagner/Doutorado/step1/indexes";
 	private static String TOPICS_FILE = "/home/fagner/Doutorado/topics2014.xml";
 	
-	private static String TREATMENT_DIR = "/home/fagner/Doutorado/step1/results/diagnosis/";
-	private static String DIAGNOSIS_DIR = "/home/fagner/Doutorado/step1/results/treatment/";
-	private static String PROGNOSIS_DIR = "/home/fagner/Doutorado/step1/results/prognosis/";
-	private static String REVIEW_DIR = "/home/fagner/Doutorado/step1/results/review/";
-	private static String CAUSATION_DIR = "/home/fagner/Doutorado/step1/results/causation/";
+	private static String STEP1_DIR = "/home/fagner/Doutorado/step1/";
+	private static String DIAGNOSIS_DIR = STEP1_DIR + "results/diagnosis/";
+	private static String TREATMENT_DIR = STEP1_DIR + "results/treatment/";
+	private static String PROGNOSIS_DIR = STEP1_DIR + "results/prognosis/";
+	private static String REVIEW_DIR = STEP1_DIR + "results/review/";
+	private static String ETIOLOGY_DIR = STEP1_DIR + "/results/etiology/";
 
 	public static void initiliaze() throws IOException {
 		(new File(TREATMENT_DIR)).mkdirs();
 		(new File(DIAGNOSIS_DIR)).mkdirs();
 		(new File(PROGNOSIS_DIR)).mkdirs();
 		(new File(REVIEW_DIR)).mkdirs();
-		(new File(CAUSATION_DIR)).mkdirs();
+		(new File(ETIOLOGY_DIR)).mkdirs();
 
 		dir = FSDirectory.open(new File(INDEX_DIR));
 		is = new IndexSearcher(dir);
+
+		CSVWriter writer = new CSVWriter(new FileWriter(STEP1_DIR + "result.csv", false));
+
+		String[] header = new String[6];
+		header[0] = "topic";
+		header[1] = "treatement";
+		header[2] = "diagnosis";
+		header[3] = "prognosis";
+		header[4] = "etiology";
+		header[5] = "review";
+
+		writer.writeNext(header);
+        writer.close();
 	}
 
 	public static void main(String[] args) throws ParseException, SAXException, ParserConfigurationException, TransformerException, IOException {
@@ -69,17 +86,30 @@ public class Searcher {
 		List<Topic> topics = getTopics(TOPICS_FILE);
 
 		for (Topic topic : topics) {
-			searchDiagnosis(topic.getDescription(), topic.getNumber());
-			searchTreatment(topic.getDescription(), topic.getNumber());
-			searchPrognosis(topic.getDescription(), topic.getNumber());
-			searchReview(topic.getDescription(), topic.getNumber());
-			searchCausation(topic.getDescription(), topic.getNumber());
+			String[] results = new String[6];
+			
+			results[0] = topic.getNumber().toString();
+			results[1] = searchTreatment(topic.getDescription(), topic.getNumber()).toString();
+			results[2] = searchDiagnosis(topic.getDescription(), topic.getNumber()).toString();
+			results[3] = searchPrognosis(topic.getDescription(), topic.getNumber()).toString();
+			results[4] = searchEtiology(topic.getDescription(), topic.getNumber()).toString();
+			results[5] = searchReview(topic.getDescription(), topic.getNumber()).toString();
+		
+			System.out.println("Resultados: "+results);
+			
+			CSVWriter writer = new CSVWriter(new FileWriter(STEP1_DIR + "result.csv", true));
+			
+	        writer.writeNext(results);
+
+	        writer.close();
+	        
+	        System.out.println("Result saved");
 		}
 		
 		is.close();
 	}
 
-	private static void searchDiagnosis(String q, int topicNumber) throws ParseException, IOException, ParserConfigurationException, TransformerException {
+	private static Integer searchDiagnosis(String q, int topicNumber) throws ParseException, IOException, ParserConfigurationException, TransformerException {
 		System.out.println("Diagnosis query: " + q);
 
 		QueryParser parser = new  MultiFieldQueryParser(LUCENE_VERSION, new String[] {"title", "abstract"}, new StandardAnalyzer(LUCENE_VERSION));
@@ -110,9 +140,11 @@ public class Searcher {
 		hits = is.search(t4, filter, hits.totalHits);
 
 		createXMLResult(hits, DIAGNOSIS_DIR, topicNumber);
+		
+		return hits.totalHits;
 	}
 
-	private static void searchTreatment(String q, int topicNumber) throws ParseException, IOException, ParserConfigurationException, TransformerException {
+	private static Integer searchTreatment(String q, int topicNumber) throws ParseException, IOException, ParserConfigurationException, TransformerException {
 		System.out.println("Treatment query: " + q);
 
 		QueryParser parser = new  MultiFieldQueryParser(LUCENE_VERSION, new String[] {"title", "abstract"}, new StandardAnalyzer(LUCENE_VERSION));
@@ -139,9 +171,10 @@ public class Searcher {
 		hits = is.search(t3, filter, hits.totalHits);
 
 		createXMLResult(hits, TREATMENT_DIR, topicNumber);
+		return hits.totalHits;
 	}
 
-	private static void searchPrognosis(String q, int topicNumber) throws ParseException, IOException, ParserConfigurationException, TransformerException {
+	private static Integer searchPrognosis(String q, int topicNumber) throws ParseException, IOException, ParserConfigurationException, TransformerException {
 		System.out.println("Prognosis query: " + q);
 
 		QueryParser parser = new  QueryParser(LUCENE_VERSION, "keywords", new StandardAnalyzer(LUCENE_VERSION));
@@ -168,9 +201,10 @@ public class Searcher {
 		hits = is.search(t3, filter, hits.totalHits);
 
 		createXMLResult(hits, PROGNOSIS_DIR, topicNumber);
+		return hits.totalHits;
 	}
 
-	public static void searchReview(String q, int topicNumber) throws IOException, ParseException, ParserConfigurationException, TransformerException {
+	public static Integer searchReview(String q, int topicNumber) throws IOException, ParseException, ParserConfigurationException, TransformerException {
 		System.out.println("Review query: " + q);
 		
 		BooleanQuery bq = new BooleanQuery();
@@ -198,10 +232,12 @@ public class Searcher {
 		hits = is.search(t3, filter, hits.totalHits);
 
 		createXMLResult(hits, REVIEW_DIR, topicNumber);
+		
+		return hits.totalHits;
 	}
 	
-	private static void searchCausation(String q, int topicNumber) throws ParseException, IOException, ParserConfigurationException, TransformerException {
-		System.out.println("Causation query: " + q);
+	private static Integer searchEtiology(String q, int topicNumber) throws ParseException, IOException, ParserConfigurationException, TransformerException {
+		System.out.println("Etiology query: " + q);
 		
 		BooleanQuery bq = new BooleanQuery();
 
@@ -228,7 +264,9 @@ public class Searcher {
 
 		hits = is.search(t3, filter, hits.totalHits);
 
-		createXMLResult(hits, CAUSATION_DIR, topicNumber);
+		createXMLResult(hits, ETIOLOGY_DIR, topicNumber);
+		
+		return hits.totalHits;
 	}
 
 	public static void search(String q) throws IOException, ParseException {
@@ -329,7 +367,5 @@ public class Searcher {
 		DOMSource source = new DOMSource(xmlDoc);
 		StreamResult result = new StreamResult(new File(dir + topicNumber + ".xml"));
 		transformer.transform(source, result);
-
-		System.out.println("File saved!");
 	}
 }
