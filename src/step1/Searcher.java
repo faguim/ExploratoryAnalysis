@@ -38,7 +38,11 @@ import org.apache.lucene.util.Version;
 import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+
 import au.com.bytecode.opencsv.CSVWriter;
+import ncbo.NCBOAnnotator;
 
 public class Searcher {
 	private static final Version LUCENE_VERSION = Version.LUCENE_30;
@@ -90,20 +94,20 @@ public class Searcher {
 			
 			results[0] = topic.getNumber().toString();
 			results[1] = searchTreatment(topic.getDescription(), topic.getNumber()).toString();
-			results[2] = searchDiagnosis(topic.getDescription(), topic.getNumber()).toString();
-			results[3] = searchPrognosis(topic.getDescription(), topic.getNumber()).toString();
-			results[4] = searchEtiology(topic.getDescription(), topic.getNumber()).toString();
-			results[5] = searchReview(topic.getDescription(), topic.getNumber()).toString();
-		
-			System.out.println("Resultados: "+results);
-			
-			CSVWriter writer = new CSVWriter(new FileWriter(STEP1_DIR + "result.csv", true));
-			
-	        writer.writeNext(results);
-
-	        writer.close();
-	        
-	        System.out.println("Result saved");
+//			results[2] = searchDiagnosis(topic.getDescription(), topic.getNumber()).toString();
+//			results[3] = searchPrognosis(topic.getDescription(), topic.getNumber()).toString();
+//			results[4] = searchEtiology(topic.getDescription(), topic.getNumber()).toString();
+//			results[5] = searchReview(topic.getDescription(), topic.getNumber()).toString();
+//		
+//			System.out.println("Resultados: "+results);
+//			
+//			CSVWriter writer = new CSVWriter(new FileWriter(STEP1_DIR + "result.csv", true));
+//			
+//	        writer.writeNext(results);
+//
+//	        writer.close();
+//	        
+//	        System.out.println("Result saved");
 		}
 		
 		is.close();
@@ -144,34 +148,40 @@ public class Searcher {
 		return hits.totalHits;
 	}
 
-	private static Integer searchTreatment(String q, int topicNumber) throws ParseException, IOException, ParserConfigurationException, TransformerException {
-		System.out.println("Treatment query: " + q);
+	private static Integer searchTreatment(String topicDescription, int topicNumber) throws ParseException, IOException, ParserConfigurationException, TransformerException {
+		System.out.println("Treatment query: " + topicDescription);
 
-		QueryParser parser = new  MultiFieldQueryParser(LUCENE_VERSION, new String[] {"title", "abstract"}, new StandardAnalyzer(LUCENE_VERSION));
-		Query t1 = parser.parse("randomized OR placebo");
-
-		parser = new  QueryParser(LUCENE_VERSION, "type", new StandardAnalyzer(LUCENE_VERSION));
-		Query t2 = parser.parse("\"randomized controlled trial\"");
-
-		BooleanQuery bq = new BooleanQuery();
-		bq.add(t1, BooleanClause.Occur.SHOULD);
-		bq.add(t2, BooleanClause.Occur.SHOULD);
-
-		System.out.println("Filter: " + bq.toString());
-
-		Filter filter = new QueryWrapperFilter(bq);
-
-		parser = new  QueryParser(LUCENE_VERSION, "content", new StandardAnalyzer(LUCENE_VERSION));
-		Query t3 = parser.parse(q);
-
-		TopDocs hits = is.search(t3, filter, 1);
-
-		System.out.println("Quantidade: " + hits.totalHits);
-
-		hits = is.search(t3, filter, hits.totalHits);
-
-		createXMLResult(hits, TREATMENT_DIR, topicNumber);
-		return hits.totalHits;
+		JsonArray meshTerms = NCBOAnnotator.annotate(topicDescription);
+		for (JsonElement meshTerm : meshTerms) {
+			System.out.println(meshTerm);
+		}
+		
+//		QueryParser parser = new  MultiFieldQueryParser(LUCENE_VERSION, new String[] {"title", "abstract"}, new StandardAnalyzer(LUCENE_VERSION));
+//		Query t1 = parser.parse("randomized OR placebo");
+//
+//		parser = new  QueryParser(LUCENE_VERSION, "type", new StandardAnalyzer(LUCENE_VERSION));
+//		Query t2 = parser.parse("\"randomized controlled trial\"");
+//
+//		BooleanQuery bq = new BooleanQuery();
+//		bq.add(t1, BooleanClause.Occur.SHOULD);
+//		bq.add(t2, BooleanClause.Occur.SHOULD);
+//
+//		System.out.println("Filter: " + bq.toString());
+//
+//		Filter filter = new QueryWrapperFilter(bq);
+//
+//		parser = new  QueryParser(LUCENE_VERSION, "content", new StandardAnalyzer(LUCENE_VERSION));
+//		Query t3 = parser.parse(topicDescription);
+//
+//		TopDocs hits = is.search(t3, filter, 1);
+//
+//		System.out.println("Quantidade: " + hits.totalHits);
+//
+//		hits = is.search(t3, filter, hits.totalHits);
+//
+//		createXMLResult(hits, TREATMENT_DIR, topicNumber);
+//		return hits.totalHits;
+		return 0;
 	}
 
 	private static Integer searchPrognosis(String q, int topicNumber) throws ParseException, IOException, ParserConfigurationException, TransformerException {

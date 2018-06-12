@@ -20,7 +20,6 @@ import org.apache.http.client.utils.URIBuilder;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.omg.CORBA.INITIALIZE;
 
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -45,7 +44,7 @@ public class NCBOAnnotator {
 		String urlParameters;
 
 		urlParameters = "text=" + inputText + "&ontologies=MESH" + "&exclude_numbers=true"
-				+ "&exclude_synonyms=true" + "&longest_only=false";
+				+ "&exclude_synonyms=false" + "&longest_only=true";
 		
 		String response = post(REST_URL + "/annotator", urlParameters);
 		
@@ -126,6 +125,10 @@ public class NCBOAnnotator {
 
 	}
 
+//	public static void annotate(String textToAnnotte) {
+//		System.out.println(textToAnnotte);
+//	}
+	
 	public static void createJSONFile(String nameOfFile, List<Map<String, Object>> maps)
 			throws IOException, JSONException {
 		JSONArray utterances = new JSONArray();
