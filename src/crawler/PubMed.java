@@ -7,6 +7,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.core.MediaType;
 import javax.xml.parsers.DocumentBuilder;
@@ -42,6 +43,8 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 import com.sun.jersey.json.impl.JSONHelper;
+
+import util.HttpClient;
 
 public class PubMed {
 	private static Client client;
@@ -165,12 +168,65 @@ public class PubMed {
 		}
 	}
 
+	public static void fetchById() throws SAXException, IOException, ParserConfigurationException {
+		String url = baseurl + "efetch.fcgi?";
+		String db = "pubmed";
+		String retmode = "xml";
+		String rettype = "full";
+		String id = "19172194";
+		
+		System.out.println("Downloading articles... ");
+
+		String parameters = "db=pubmed&rettype=" + rettype + "&" + "retmode=" + retmode + "&api_key=" + api_key + "&id=" + id;
+		String query = url + parameters;
+		
+		String response = HttpClient.get(query, api_key);
+		System.out.println(response);
+		
+		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+		Document doc = docBuilder.parse(new InputSource(new StringReader(response)));
+		
+//		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+//		Transformer transformer = transformerFactory.newTransformer();
+//		DOMSource source = new DOMSource(doc);
+//		StreamResult result = new StreamResult(
+//				new File(XML_DIRECTORY + retstart + "-" + (retstart + retmax) + ".xml"));
+//		transformer.transform(source, result);
+
+		NodeList articles = doc.getElementsByTagName("MeshHeading");
+		System.out.println(articles.getLength());
+		
+		for (int i = 0; i < articles.getLength(); i++) {
+//			NodeList
+//			System.out.println(articles.item(i).getFirstChild().getNodeValue());
+		}
+		
+		System.out.println(doc);
+//		WebResource webResource = client.resource(query);
+//		ClientResponse response = webResource.get(ClientResponse.class);
+//		
+//		System.out.println(response);
+//		
+//		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+//		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+//		Document doc = docBuilder.parse(response.getEntityInputStream());
+//
+//		System.out.println(doc);
+//		
+	}
+	
 	public static void main(String[] args) throws JSONException, InterruptedException, ParserConfigurationException,
 			SAXException, IOException, TransformerException {
 		initialize();
-		fetchByTerm("respiratory+failure");
+//		fetchByTerm("respiratory+failure");
+		fetchById();
 	}
 
+	public static List<String> getMesgTerms(int paperId){
+		return new ArrayList<>();
+	}
+	
 	public static JSONArray eSearch() throws JSONException {
 		String db = "pubmed";
 		String term = "respiratory+failure";
@@ -251,6 +307,8 @@ public class PubMed {
 		System.out.println(responseBody);
 	}
 
+	
+	
 	public static String prettiffy(String entityResponse) {
 		JsonElement jsonResponse;
 		try {

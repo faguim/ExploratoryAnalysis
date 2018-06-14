@@ -197,7 +197,6 @@ public class NCBOAnnotator {
 	}
 
 	private static String get(String urlToGet) {
-
 		URL url;
 		HttpURLConnection conn;
 		BufferedReader rd;

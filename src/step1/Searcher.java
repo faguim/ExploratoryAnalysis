@@ -86,30 +86,31 @@ public class Searcher {
 
 	public static void main(String[] args) throws ParseException, SAXException, ParserConfigurationException, TransformerException, IOException {
 		initiliaze();
-
-		List<Topic> topics = getTopics(TOPICS_FILE);
-
-		for (Topic topic : topics) {
-			String[] results = new String[6];
-			
-			results[0] = topic.getNumber().toString();
-			results[1] = searchTreatment(topic.getDescription(), topic.getNumber()).toString();
-//			results[2] = searchDiagnosis(topic.getDescription(), topic.getNumber()).toString();
-//			results[3] = searchPrognosis(topic.getDescription(), topic.getNumber()).toString();
-//			results[4] = searchEtiology(topic.getDescription(), topic.getNumber()).toString();
-//			results[5] = searchReview(topic.getDescription(), topic.getNumber()).toString();
-//		
-//			System.out.println("Resultados: "+results);
-//			
-//			CSVWriter writer = new CSVWriter(new FileWriter(STEP1_DIR + "result.csv", true));
-//			
-//	        writer.writeNext(results);
+		search("mesh muco cutaneous lymph no de syndrome");
+//		simplestSearch("Mesh");
+//		List<Topic> topics = getTopics(TOPICS_FILE);
 //
-//	        writer.close();
-//	        
-//	        System.out.println("Result saved");
-		}
-		
+//		for (Topic topic : topics) {
+//			String[] results = new String[6];
+//			
+//			results[0] = topic.getNumber().toString();
+//			results[1] = searchTreatment(topic.getDescription(), topic.getNumber()).toString();
+////			results[2] = searchDiagnosis(topic.getDescription(), topic.getNumber()).toString();
+////			results[3] = searchPrognosis(topic.getDescription(), topic.getNumber()).toString();
+////			results[4] = searchEtiology(topic.getDescription(), topic.getNumber()).toString();
+////			results[5] = searchReview(topic.getDescription(), topic.getNumber()).toString();
+////		
+////			System.out.println("Resultados: "+results);
+////			
+////			CSVWriter writer = new CSVWriter(new FileWriter(STEP1_DIR + "result.csv", true));
+////			
+////	        writer.writeNext(results);
+////
+////	        writer.close();
+////	        
+////	        System.out.println("Result saved");
+//		}
+//		
 		is.close();
 	}
 
@@ -299,7 +300,7 @@ public class Searcher {
 	}
 
 	public static void simplestSearch(String q) throws CorruptIndexException, IOException {
-		Term t = new Term("abstract", q);
+		Term t = new Term("content", q);
 		Query query = new TermQuery(t);
 		TopDocs topDocs = is.search(query, 10);
 		System.out.println(topDocs.totalHits);
