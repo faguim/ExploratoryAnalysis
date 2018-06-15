@@ -60,7 +60,7 @@ public class PubMed {
 	}
 
 	public static void fetchByTerm(String term) throws JSONException, ParserConfigurationException, SAXException,
-			IOException, InterruptedException, TransformerException {
+	IOException, InterruptedException, TransformerException {
 		initialize();
 
 		String db = "pubmed";
@@ -85,7 +85,7 @@ public class PubMed {
 
 		int retstart = 0;
 		int retmax = 10000; // The maximum number of papers to be downloaded per call is 10k (recomendation
-							// of eFetch docs)
+		// of eFetch docs)
 		int count = esearchresult.getInt("count");
 		retmode = "xml";
 		rettype = "abstract";
@@ -165,16 +165,19 @@ public class PubMed {
 		}
 	}
 
-	public static Map<String, List<String>> fetchById(String db, String rettype, String retmode, String idsParameter, String webEnv, String queryKey, int n) throws SAXException, IOException, ParserConfigurationException, InterruptedException {
+	public static List<String> fetchById(String db, String idsParameter, String webEnv, String queryKey, int n) throws SAXException, IOException, ParserConfigurationException, InterruptedException {
 		String url = baseurl + "efetch.fcgi?";
 
+		String retmode = "xml";
+		String rettype = "full";
+		
 		int retstart = 0;
 		int retmax = 50;
-		
-		Map<String, List<String>> meshTermsMap = new HashMap<>();
 
-//		System.out.println(n);
+		List<String> papers = new ArrayList<>();
+		
 		while (retstart < n) {
+//		while (retstart < 50) {
 			System.out.println(retstart + " " + n);
 			System.out.println("Downloading articles: " + retstart + " -> " + (retstart+retmax));
 			String parameters = "db=" + db + 
@@ -187,58 +190,43 @@ public class PubMed {
 					"&api_key=" + api_key;
 
 			String response = HttpClient.post(url, parameters, api_key);
+			papers.add(response);
 			
-			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse(new InputSource(new StringReader(response)));
-			
-			NodeList articles = doc.getElementsByTagName("PubmedArticle");
-
-			for (int i = 0; i < articles.getLength(); i++) {
-				Node articleNode = articles.item(i);
-				List<String> meshTerms = new ArrayList<>();
-				
-				if (articleNode.getNodeType() == Node.ELEMENT_NODE) {
-					Element article = (Element) articleNode;
-					
-					NodeList articleId = article.getElementsByTagName("ArticleId");
-					String pmid = "";
-					for (int j = 0; j < articleId.getLength(); j++) {
-						Node idType = articleId.item(j).getAttributes().getNamedItem("IdType");
-						String idTypeContent = idType.getTextContent();
-						
-						if(idTypeContent.equals("pubmed")) {
-							pmid = articleId.item(j).getTextContent();
-						}
-					}
-					
-					NodeList meshHeadings = article.getElementsByTagName("MeshHeading");
-					
-					for (int j = 0; j < meshHeadings.getLength(); j++) {
-						meshTerms.add(meshHeadings.item(j).getTextContent());
-					}
-					meshTermsMap.put(pmid, meshTerms);
-				}
-			}
 			retstart += retmax;
 			Thread.sleep(1000);
 		}
-		
-		System.out.println(meshTermsMap.size());
-		return meshTermsMap;
+
+		return papers;
 	}
-	
+
+	public static String fetchById(String db, String pmid) {
+		String url = baseurl + "efetch.fcgi?";
+		String retmode = "xml";
+		String rettype = "full";
+
+		System.out.println("Downloading article: " + pmid);
+		String parameters = "id=" + pmid + 
+				"&db=" + db + 
+				"&rettype=" + rettype + 
+				"&retmode=" + retmode + 
+				"&api_key=" + api_key;
+
+		String response = HttpClient.post(url, parameters, api_key);
+		System.out.println(response);
+		return response;
+	}
+
 	public static Map<String, String> ePost(String db, String ids) throws ParserConfigurationException, SAXException, IOException, InterruptedException {
 		String url = baseurl + "epost.fcgi?";
-		
+
 		String parameters = "db=pubmed&" + "&api_key=" + api_key + "&id=" + ids;
-		
+
 		String response = HttpClient.post(url, parameters, api_key);
-		
+
 		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 		Document doc = docBuilder.parse(new InputSource(new StringReader(response)));
-		
+
 		NodeList webEnvXMLElement = doc.getElementsByTagName("WebEnv");
 		NodeList queryKey = doc.getElementsByTagName("QueryKey");
 
@@ -247,37 +235,153 @@ public class PubMed {
 		historyServer.put("QueryKey", queryKey.item(0).getTextContent());
 
 		Thread.sleep(1000);
-		
+
 		return historyServer;
 	}
-	
-	public static void main(String[] args) throws JSONException, InterruptedException, ParserConfigurationException,
-			SAXException, IOException, TransformerException {
-		initialize();
-//		fetchByTerm("respiratory+failure");
-//		fetchById("pubmed", "xml", "full");
-//		ePost("pubmed", "19172194");
+
+	public static List<String> getMeshTerms(String pmid) throws ParserConfigurationException, SAXException, IOException {
+		List<String> meshTerms = new ArrayList<>();
+
+		String db = "pubmed";
+
+		String paperString = fetchById(db, pmid);
+
+		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+		Document doc = docBuilder.parse(new InputSource(new StringReader(paperString)));
+
+		NodeList articles = doc.getElementsByTagName("PubmedArticle");
+
+		for (int i = 0; i < articles.getLength(); i++) {
+			Node articleNode = articles.item(i);
+
+			if (articleNode.getNodeType() == Node.ELEMENT_NODE) {
+				Element article = (Element) articleNode;
+
+				NodeList meshHeadings = article.getElementsByTagName("MeshHeading");
+
+				for (int j = 0; j < meshHeadings.getLength(); j++) {
+					Node meshHeadingNode = meshHeadings.item(j);
+
+					if(meshHeadingNode.getNodeType() == Node.ELEMENT_NODE) {
+						Element meshHeading = (Element) meshHeadingNode;
+						NodeList descriptors = meshHeading.getElementsByTagName("DescriptorName");
+						NodeList qualifiers = meshHeading.getElementsByTagName("QualifierName");
+
+						String descriptor = "";
+						
+						for (int k = 0; k < descriptors.getLength(); k++) {
+							String major = descriptors.item(k).getAttributes().getNamedItem("MajorTopicYN").getTextContent();
+							descriptor = descriptors.item(k).getTextContent();
+							
+							if (major.equals("Y"))
+								descriptor += "*";
+						}
+						
+						if (qualifiers.getLength() == 0)
+							meshTerms.add(descriptor);
+						else {
+							for (int k = 0; k < qualifiers.getLength(); k++) {
+								String major = qualifiers.item(k).getAttributes().getNamedItem("MajorTopicYN").getTextContent();
+								String qualifier = qualifiers.item(k).getTextContent();
+								if (major.equals("Y"))
+									qualifier += "*";
+								meshTerms.add(descriptor + "/" + qualifier);
+							}
+						}
+					}
+				}
+			}
+		}
+		System.out.println(meshTerms);
+		return meshTerms;
 	}
 
 	public static Map<String, List<String>> getMeshTerms(List<String> idsParameter) throws SAXException, IOException, ParserConfigurationException, InterruptedException{
 		String db = "pubmed";
 		String retmode = "xml";
 		String rettype = "full";
-		
+
 		int n = idsParameter.size();
-		
+
 		String ids = idsParameter.remove(0);
 		for (String id : idsParameter) {
 			ids += "," + id;
 		}
-		
+
 		Map<String, String> historyServer = ePost(db, ids);
+		Map<String, List<String>> meshTermsMap = new HashMap<>();
+
 		
-		return fetchById(db, rettype, retmode, ids, historyServer.get("WebEnv"), historyServer.get("QueryKey"), n);
+		List<String> papers = fetchById(db, ids, historyServer.get("WebEnv"), historyServer.get("QueryKey"), n);
 		
-//		return new HashMap<>();
+		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+		for (String paper : papers) {
+			Document doc = docBuilder.parse(new InputSource(new StringReader(paper)));
+
+			NodeList articles = doc.getElementsByTagName("PubmedArticle");
+
+			for (int i = 0; i < articles.getLength(); i++) {
+				Node articleNode = articles.item(i);
+				List<String> meshTerms = new ArrayList<>();
+
+				if (articleNode.getNodeType() == Node.ELEMENT_NODE) {
+					Element article = (Element) articleNode;
+
+					NodeList articleId = article.getElementsByTagName("ArticleId");
+					String pmid = "";
+					for (int j = 0; j < articleId.getLength(); j++) {
+						Node idType = articleId.item(j).getAttributes().getNamedItem("IdType");
+						String idTypeContent = idType.getTextContent();
+
+						if(idTypeContent.equals("pubmed")) {
+							pmid = articleId.item(j).getTextContent();
+						}
+					}
+
+					NodeList meshHeadings = article.getElementsByTagName("MeshHeading");
+
+					for (int j = 0; j < meshHeadings.getLength(); j++) {
+						Node meshHeadingNode = meshHeadings.item(j);
+
+						if(meshHeadingNode.getNodeType() == Node.ELEMENT_NODE) {
+							Element meshHeading = (Element) meshHeadingNode;
+							NodeList descriptors = meshHeading.getElementsByTagName("DescriptorName");
+							NodeList qualifiers = meshHeading.getElementsByTagName("QualifierName");
+
+							String descriptor = "";
+							
+							for (int k = 0; k < descriptors.getLength(); k++) {
+								String major = descriptors.item(k).getAttributes().getNamedItem("MajorTopicYN").getTextContent();
+								descriptor = descriptors.item(k).getTextContent();
+								
+								if (major.equals("Y"))
+									descriptor += "*";
+							}
+							
+							if (qualifiers.getLength() == 0)
+								meshTerms.add(descriptor);
+							else {
+								for (int k = 0; k < qualifiers.getLength(); k++) {
+									String major = qualifiers.item(k).getAttributes().getNamedItem("MajorTopicYN").getTextContent();
+									String qualifier = qualifiers.item(k).getTextContent();
+									if (major.equals("Y"))
+										qualifier += "*";
+									meshTerms.add(descriptor + "/" + qualifier);
+								}
+							}
+						}
+					}
+					
+					meshTermsMap.put(pmid, meshTerms);
+				}
+			}
+		}
+
+		return meshTermsMap;
 	}
-	
+
 	public static JSONArray eSearch() throws JSONException {
 		String db = "pubmed";
 		String term = "respiratory+failure";
@@ -289,7 +393,7 @@ public class PubMed {
 		String url = baseurl + "esearch.fcgi?";
 
 		String parameters = "db=" + db + "&" + "term=" + term + "&" + "api_key=" + api_key + "&"
-		// + "retmax=" + retmax + "&"
+				// + "retmax=" + retmax + "&"
 				+ "usehistory=" + usehistory;
 		// + "retmode=" + retmode;
 
@@ -358,8 +462,15 @@ public class PubMed {
 		System.out.println(responseBody);
 	}
 
-	
-	
+	public static void main(String[] args) throws JSONException, InterruptedException, ParserConfigurationException,
+	SAXException, IOException, TransformerException {
+		initialize();
+		//fetchByTerm("respiratory+failure");
+//		fetchById("pubmed", "19906740");
+		getMeshTerms("19906740");
+		//ePost("pubmed", "19172194");
+	}
+
 	public static String prettiffy(String entityResponse) {
 		JsonElement jsonResponse;
 		try {

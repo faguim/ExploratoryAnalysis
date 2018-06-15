@@ -64,7 +64,18 @@ public class XMLtoLuceneDocument {
 		doc.add(new Field("title", article.getArticleTitle(), Field.Store.YES, Field.Index.ANALYZED));
 		doc.add(new Field("type", article.getArticleType(), Field.Store.YES, Field.Index.ANALYZED));
 		doc.add(new Field("abstract", article.getAbstractArticle(), Field.Store.YES, Field.Index.ANALYZED));
-		doc.add(new Field("keywords", article.getKeywords().toString(), Field.Store.YES, Field.Index.ANALYZED));
+		
+		String keywords = "";
+		
+		if (!article.getKeywords().isEmpty()) {
+			keywords = article.getKeywords().remove(0);
+			
+			for (String keyword : article.getKeywords()) {
+				keywords += ", " + keyword;
+			}
+		}
+		doc.add(new Field("keywords", keywords, Field.Store.YES, Field.Index.ANALYZED));
+
 		if (null != article.getPmid())
 			doc.add(new Field("pmid", article.getPmid(), Field.Store.YES, Field.Index.ANALYZED));
 	}

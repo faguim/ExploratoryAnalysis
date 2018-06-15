@@ -87,7 +87,8 @@ public class Searcher {
 
 	public static void main(String[] args) throws ParseException, SAXException, ParserConfigurationException, TransformerException, IOException {
 		initiliaze();
-		search("mesh muco cutaneous lymph no de syndrome");
+//		search("mesh muco cutaneous lymph no de syndrome");
+		System.out.println(search("pmid", "19906740"));
 //		simplestSearch("Mesh");
 //		List<Topic> topics = getTopics(TOPICS_FILE);
 //

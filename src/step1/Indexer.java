@@ -81,14 +81,16 @@ public class Indexer {
 		}
 
 //		indexer.viewIndexedDocs(PAPER_DIR + "pmc-01/09/", new TextFilesFilter());
-//		indexer.close();
 	}
 
 	public void viewIndexedDocs(String dataDir, FileFilter filter) throws IOException, ParseException {
 		List<Document> docs = Searcher.getAllDocs();
 		
+		int i = 0;
 		for (Document document : docs) {
 			System.out.println(document);
+			i++;
+			if(i>50) break;
 		}
 	}
 
@@ -125,7 +127,7 @@ public class Indexer {
 					meshTermsString = meshTerms.remove(0);
 					
 					for (String meshTerm : meshTerms) {
-						meshTermsString += " , " + meshTerm;
+						meshTermsString += ", " + meshTerm;
 					}
 				}
 				
