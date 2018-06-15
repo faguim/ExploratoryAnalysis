@@ -173,7 +173,9 @@ public class PubMed {
 		
 		Map<String, List<String>> meshTermsMap = new HashMap<>();
 
-		while (retstart < 50) {
+//		System.out.println(n);
+		while (retstart < n) {
+			System.out.println(retstart + " " + n);
 			System.out.println("Downloading articles: " + retstart + " -> " + (retstart+retmax));
 			String parameters = "db=" + db + 
 					"&retstart=" + retstart +

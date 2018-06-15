@@ -334,17 +334,20 @@ public class Searcher {
 		is.close();
 	}
 
-	public static void getAllDocs() throws IOException {
+	public static List<Document> getAllDocs() throws IOException {
 		initiliaze();
 		Query query = new MatchAllDocsQuery();
 		
-		TopDocs hits = is.search(query, 10);
+		TopDocs hits = is.search(query, 1);
+		
+		hits = is.search(query, hits.totalHits);
 
+		List<Document> docs = new ArrayList<>();
+		
 		for (ScoreDoc scoreDoc : hits.scoreDocs) {
-			Document doc = is.doc(scoreDoc.doc);
-			System.out.println(doc);
+			docs.add(is.doc(scoreDoc.doc));
 		}
-		System.out.println(hits.totalHits);
+		return docs;
 	}
 	
 	public static List<Topic> getTopics(String filepath) throws IOException, SAXException {
