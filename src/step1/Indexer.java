@@ -67,13 +67,16 @@ public class Indexer {
 		Indexer indexer = new Indexer(INDEX_DIR);
 		try {
 			indexer.index(PAPER_DIR + "pmc-01/09/", new TextFilesFilter());
-			indexer.updateIndex(PAPER_DIR + "pmc-01/09/", new TextFilesFilter());
-//			indexer.viewIndexedDocs(PAPER_DIR + "pmc-01/09/", new TextFilesFilter());
 		} finally {
 			indexer.close();
 		}
 		
+		indexer.updateIndex(PAPER_DIR + "pmc-01/09/", new TextFilesFilter());
+		indexer.close();
+		
+//		indexer.viewIndexedDocs(PAPER_DIR + "pmc-01/09/", new TextFilesFilter());
 //		indexer.close();
+
 	}
 
 	public void viewIndexedDocs(String dataDir, FileFilter filter) throws IOException, ParseException {
@@ -112,6 +115,7 @@ public class Indexer {
 				}
 			}
 		}
+		System.out.println(pmids);
 		Map<String, List<String>> meshTermsMap = PubMed.getMeshTerms(pmids);
 		
 		for (File f : files) {
@@ -121,7 +125,6 @@ public class Indexer {
 					if (null != updateDoc.get("pmid")) {
 						List<String> meshTerms = meshTermsMap.get(updateDoc.get("pmid"));
 						if (null != meshTerms) {
-							System.out.println("meshTerms: "+meshTerms);
 							updateDoc.add(new Field("meshTerms", meshTerms.toString(), Field.Store.YES, Field.Index.ANALYZED));
 							writer.updateDocument(new Term("filename", f.getName()), updateDoc);
 						}
@@ -133,7 +136,7 @@ public class Indexer {
 	
 	public void indexFile(File f) {
 		try {
-			System.out.println("Indexing " + f.getCanonicalPath());
+//			System.out.println("Indexing " + f.getCanonicalPath());
 			Document doc;
 			doc = XMLtoLuceneDocument.parse(f);
 			

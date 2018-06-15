@@ -209,7 +209,6 @@ public class PubMed {
 				meshTermsMap.put(pmid, meshTerms);
 			}
 		}
-		System.out.println(meshTermsMap);
 		return meshTermsMap;
 	}
 	
