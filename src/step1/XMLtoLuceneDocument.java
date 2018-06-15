@@ -3,6 +3,9 @@ package step1;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.xml.bind.UnmarshalException;
 import javax.xml.parsers.ParserConfigurationException;
@@ -14,9 +17,17 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.xml.sax.SAXException;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
+import util.HttpClient;
+
 public class XMLtoLuceneDocument {
 	Digester dig;
 	private static Document doc;
+	private static List<String> pmids = new ArrayList<>();
 	
 	public XMLtoLuceneDocument() throws ParserConfigurationException, SAXException {
 		SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -32,13 +43,19 @@ public class XMLtoLuceneDocument {
 		dig.addObjectCreate("article", Article.class);
 		
 		dig.addSetProperties("article", "article-type", "articleType" );
-		
+
 	    dig.addBeanPropertySetter("article/front/article-meta/title-group/article-title", "articleTitle");
 		dig.addBeanPropertySetter( "article/front/article-meta/abstract/p", "abstractArticle");
-		
+		dig.addBeanPropertySetter( "article/front/article-meta/abstract/p", "abstractArticle");
+
+		dig.addCallMethod("article/front/article-meta/article-id", "addId", 2);
+		dig.addCallParam("article/front/article-meta/article-id", 0);
+		dig.addCallParam("article/front/article-meta/article-id", 1, "pub-id-type");
+
+
 		dig.addCallMethod("article/front/article-meta/kwd-group/kwd", "addKeywords", 1);
 		dig.addCallParam("article/front/article-meta/kwd-group/kwd", 0);
-
+		
 		dig.addSetNext("article", "populateDocument");
 	}
 	
@@ -48,12 +65,60 @@ public class XMLtoLuceneDocument {
 		doc.add(new Field("type", article.getArticleType(), Field.Store.YES, Field.Index.ANALYZED));
 		doc.add(new Field("abstract", article.getAbstractArticle(), Field.Store.YES, Field.Index.ANALYZED));
 		doc.add(new Field("keywords", article.getKeywords().toString(), Field.Store.YES, Field.Index.ANALYZED));
+		if (null != article.getPmid())
+			doc.add(new Field("pmid", article.getPmid(), Field.Store.YES, Field.Index.ANALYZED));
 	}
 	
 	public static Document parse(File f) throws ParserConfigurationException, SAXException, UnmarshalException, IOException {
 		XMLtoLuceneDocument handler = new XMLtoLuceneDocument();
 
 		handler.dig.parse(f);
+		
+//		System.out.println(pmid);
+//		String url = "https://id.nlm.nih.gov/mesh/sparql";
+//			
+//		String query = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>" + 
+//				"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>" + 
+//				"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>" + 
+//				"PREFIX owl: <http://www.w3.org/2002/07/owl#>" + 
+//				"PREFIX meshv: <http://id.nlm.nih.gov/mesh/vocab#>" +
+//				"PREFIX mesh: <http://id.nlm.nih.gov/mesh/>PREFIX mesh2015:<http://id.nlm.nih.gov/mesh/2015/>PREFIX mesh2016:<http://id.nlm.nih.gov/mesh/2016/>PREFIX mesh2017:<http://id.nlm.nih.gov/mesh/2017/> " + 
+//				"SELECT DISTINCT ?descriptor ?label " + 
+//				"FROM <http://id.nlm.nih.gov/mesh>" + 
+//				"WHERE {" + 
+//				"mesh:D014777 meshv:treeNumber ?treeNum ." + 
+//				"?childTreeNum meshv:parentTreeNumber+ ?treeNum ." + 
+//				"?descriptor meshv:treeNumber ?childTreeNum ." + 
+//				"?descriptor rdfs:label ?label ." + 
+//				"}"+ 
+//				"ORDER BY ?label";	
+//		
+//		int resultAmount = 0;
+//		int offset = 0;
+//		
+//		List<String> meshTerms = new ArrayList<String>();
+//		
+//		do {
+//			String result = HttpClient.get(url + "?" + "query=" + URLEncoder.encode(query, "UTF-8") + "&format=JSON&offset=" + offset + "0&inference=true", "");
+//			
+//			JsonObject resultJson = new JsonParser().parse(result).getAsJsonObject();
+//			JsonArray bindings = resultJson.getAsJsonObject("results").getAsJsonArray("bindings");
+//			
+//			resultAmount = bindings.size();
+//			
+//			for (int i = 0; i < bindings.size(); i++) {
+//				String meshTerm = bindings.get(i).getAsJsonObject().getAsJsonObject("label").get("value").getAsString();
+//				meshTerms.add(meshTerm);
+//			}
+//			
+//			offset = offset + 1000;
+//			if (resultAmount>=1000)
+//				System.out.println();
+//			System.out.println(resultAmount);
+//		} while (resultAmount/1000 == 1);
+//		
+//		System.out.println(meshTerms);
+		
 		doc.add(new Field("content", new FileReader(f)));
 		doc.add(new Field("filename", f.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 		doc.add(new Field("fullpath", f.getCanonicalPath(), Field.Store.YES, Field.Index.NOT_ANALYZED));
@@ -64,7 +129,7 @@ public class XMLtoLuceneDocument {
 	public static void main(String[] args) {
 		Document doc = null;
 		try {
-			doc = parse(new File("/home/fagner/TREC/papers/pmc-00/20/2374409.nxml"));
+			doc = parse(new File("/home/fagner/Doutorado/papers/pmc-00/00/2630847.nxml"));
 			System.out.println(doc);
 		} catch (UnmarshalException | IOException | ParserConfigurationException | SAXException e) {
 			e.printStackTrace();

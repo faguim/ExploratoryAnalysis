@@ -50,7 +50,7 @@ public class Searcher {
 	private static Directory dir;
 	private static IndexSearcher is;
 
-	private static String INDEX_DIR = "/home/fagner/Doutorado/step1/indexes";
+	private static String INDEX_DIR = "/home/fagner/Doutorado/step1/indexes2";
 	private static String TOPICS_FILE = "/home/fagner/Doutorado/topics2014.xml";
 	
 	private static String STEP1_DIR = "/home/fagner/Doutorado/step1/";
@@ -299,6 +299,19 @@ public class Searcher {
 		}
 	}
 
+	public static Document searchByFileName(String fileName) throws IOException, ParseException {
+		initiliaze();
+		Term t = new Term("filename", fileName);
+		Query query = new TermQuery(t);
+		TopDocs hits = is.search(query, 1);
+		
+		for (ScoreDoc scoreDoc : hits.scoreDocs) {
+			Document doc = is.doc(scoreDoc.doc);
+			return doc;
+		}
+		return null;
+	}
+	
 	public static void simplestSearch(String q) throws CorruptIndexException, IOException {
 		Term t = new Term("content", q);
 		Query query = new TermQuery(t);

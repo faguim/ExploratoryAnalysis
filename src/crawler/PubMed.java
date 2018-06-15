@@ -2,26 +2,24 @@ package crawler;
 
 import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.core.MediaType;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.commons.logging.Log;
-import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,7 +40,6 @@ import com.google.gson.JsonSyntaxException;
 import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
-import com.sun.jersey.json.impl.JSONHelper;
 
 import util.HttpClient;
 
@@ -168,63 +165,98 @@ public class PubMed {
 		}
 	}
 
-	public static void fetchById() throws SAXException, IOException, ParserConfigurationException {
+	public static Map<String, List<String>> fetchById(String db, String rettype, String retmode, String idsParameter) throws SAXException, IOException, ParserConfigurationException {
 		String url = baseurl + "efetch.fcgi?";
-		String db = "pubmed";
-		String retmode = "xml";
-		String rettype = "full";
-		String id = "19172194";
 		
 		System.out.println("Downloading articles... ");
 
-		String parameters = "db=pubmed&rettype=" + rettype + "&" + "retmode=" + retmode + "&api_key=" + api_key + "&id=" + id;
-		String query = url + parameters;
+		String parameters = "db=" + db + "&rettype=" + rettype + "&retmode=" + retmode + "&api_key=" + api_key + "&id=" + idsParameter;
 		
-		String response = HttpClient.get(query, api_key);
+		String response = HttpClient.post(url, parameters, api_key);
 		System.out.println(response);
 		
 		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 		Document doc = docBuilder.parse(new InputSource(new StringReader(response)));
 		
-//		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-//		Transformer transformer = transformerFactory.newTransformer();
-//		DOMSource source = new DOMSource(doc);
-//		StreamResult result = new StreamResult(
-//				new File(XML_DIRECTORY + retstart + "-" + (retstart + retmax) + ".xml"));
-//		transformer.transform(source, result);
+		NodeList articles = doc.getElementsByTagName("PubmedArticle");
 
-		NodeList articles = doc.getElementsByTagName("MeshHeading");
-		System.out.println(articles.getLength());
+		Map<String, List<String>> meshTermsMap = new HashMap<>();
 		
 		for (int i = 0; i < articles.getLength(); i++) {
-//			NodeList
-//			System.out.println(articles.item(i).getFirstChild().getNodeValue());
+			Node articleNode = articles.item(i);
+			List<String> meshTerms = new ArrayList<>();
+			
+			if (articleNode.getNodeType() == Node.ELEMENT_NODE) {
+				Element article = (Element) articleNode;
+				
+				NodeList articleId = article.getElementsByTagName("ArticleId");
+				String pmid = "";
+				for (int j = 0; j < articleId.getLength(); j++) {
+					Node idType = articleId.item(j).getAttributes().getNamedItem("IdType");
+					String idTypeContent = idType.getTextContent();
+					
+					if(idTypeContent.equals("pubmed")) {
+						pmid = articleId.item(j).getTextContent();
+					}
+				}
+				
+				NodeList meshHeadings = article.getElementsByTagName("MeshHeading");
+				
+				for (int j = 0; j < meshHeadings.getLength(); j++) {
+					meshTerms.add(meshHeadings.item(j).getTextContent());
+				}
+				meshTermsMap.put(pmid, meshTerms);
+			}
+		}
+		System.out.println(meshTermsMap);
+		return meshTermsMap;
+	}
+	
+	public static void ePost(String db, List<String> ids) throws ParserConfigurationException, SAXException, IOException {
+		String idsParameter = ids.remove(0);
+		for (String id : ids) {
+			idsParameter += "," + id;
 		}
 		
-		System.out.println(doc);
-//		WebResource webResource = client.resource(query);
-//		ClientResponse response = webResource.get(ClientResponse.class);
-//		
-//		System.out.println(response);
-//		
-//		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-//		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-//		Document doc = docBuilder.parse(response.getEntityInputStream());
-//
-//		System.out.println(doc);
-//		
+		String url = baseurl + "epost.fcgi?";
+		
+		System.out.println("Downloading articles... ");
+
+		String parameters = "db=pubmed&" + "&api_key=" + api_key + "&id=" + idsParameter;
+		
+		String response = HttpClient.post(url, parameters, api_key);
+		System.out.println(response);
+		
+		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+		Document doc = docBuilder.parse(new InputSource(new StringReader(response)));
+		
+		NodeList webEnv = doc.getElementsByTagName("WebEnv");
+
+		System.out.println(webEnv.item(0).getTextContent());
+		
 	}
 	
 	public static void main(String[] args) throws JSONException, InterruptedException, ParserConfigurationException,
 			SAXException, IOException, TransformerException {
 		initialize();
 //		fetchByTerm("respiratory+failure");
-		fetchById();
+//		fetchById("pubmed", "xml", "full");
+//		ePost("pubmed", "19172194");
 	}
 
-	public static List<String> getMesgTerms(int paperId){
-		return new ArrayList<>();
+	public static Map<String, List<String>> getMeshTerms(List<String> ids) throws SAXException, IOException, ParserConfigurationException{
+		String db = "pubmed";
+		String retmode = "xml";
+		String rettype = "full";
+		
+		String idsParameter = ids.remove(0);
+		for (String id : ids) {
+			idsParameter += "," + id;
+		}
+		
+		return fetchById(db, rettype, retmode, idsParameter);
 	}
 	
 	public static JSONArray eSearch() throws JSONException {

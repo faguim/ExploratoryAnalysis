@@ -13,7 +13,8 @@ public class Article {
 	@XmlAttribute private String abstractArticle = "";
 	@XmlAttribute private List<String> keywords = new ArrayList<>();
 	@XmlAttribute private List<Section> sections = new ArrayList<>();
-	
+	@XmlAttribute private String pmid;
+
 	public void addSection(Section section) {
 		this.sections.add(section);
 	}
@@ -61,4 +62,19 @@ public class Article {
 	public void setKeywords(List<String> keywords) {
 		this.keywords = keywords;
 	}
+	
+	public void addId(String value, String type) {
+		if(type.equals("pmid")) {
+			this.setPmid(value);
+		}
+	}
+
+	public String getPmid() {
+		return pmid;
+	}
+
+	public void setPmid(String pmid) {
+		this.pmid = pmid;
+	}
+
 }

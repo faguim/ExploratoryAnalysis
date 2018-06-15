@@ -18,7 +18,7 @@ public class HttpClient {
 			conn = (HttpURLConnection) url.openConnection();
 			conn.setRequestMethod("GET");
 			conn.setRequestProperty("Authorization", "apikey token=" + key);
-			conn.setRequestProperty("Accept", "application/json");
+//			conn.setRequestProperty("Accept", "application/xml");
 			rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 			while ((line = rd.readLine()) != null) {
 				result += line;
