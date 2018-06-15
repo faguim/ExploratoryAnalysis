@@ -27,6 +27,7 @@ import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Filter;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.QueryWrapperFilter;
 import org.apache.lucene.search.ScoreDoc;
@@ -312,6 +313,19 @@ public class Searcher {
 		return null;
 	}
 	
+	public static Document search(String field, String content) throws IOException, ParseException {
+		initiliaze();
+		Term t = new Term(field, content);
+		Query query = new TermQuery(t);
+		TopDocs hits = is.search(query, 1);
+
+		Document doc = null;
+		for (ScoreDoc scoreDoc : hits.scoreDocs) {
+			doc = is.doc(scoreDoc.doc);
+		}
+		return doc;
+	}
+	
 	public static void simplestSearch(String q) throws CorruptIndexException, IOException {
 		Term t = new Term("content", q);
 		Query query = new TermQuery(t);
@@ -320,6 +334,19 @@ public class Searcher {
 		is.close();
 	}
 
+	public static void getAllDocs() throws IOException {
+		initiliaze();
+		Query query = new MatchAllDocsQuery();
+		
+		TopDocs hits = is.search(query, 10);
+
+		for (ScoreDoc scoreDoc : hits.scoreDocs) {
+			Document doc = is.doc(scoreDoc.doc);
+			System.out.println(doc);
+		}
+		System.out.println(hits.totalHits);
+	}
+	
 	public static List<Topic> getTopics(String filepath) throws IOException, SAXException {
 		Digester dig = new Digester();
 		dig.setValidating(false);
@@ -392,4 +419,6 @@ public class Searcher {
 		StreamResult result = new StreamResult(new File(dir + topicNumber + ".xml"));
 		transformer.transform(source, result);
 	}
+
+	
 }
