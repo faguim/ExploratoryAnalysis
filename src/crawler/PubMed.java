@@ -299,8 +299,6 @@ public class PubMed {
 
 	public static Map<String, List<String>> getMeshTerms(List<String> idsParameter) throws SAXException, IOException, ParserConfigurationException, InterruptedException{
 		String db = "pubmed";
-		String retmode = "xml";
-		String rettype = "full";
 
 		int n = idsParameter.size();
 

@@ -51,7 +51,7 @@ public class Searcher {
 	private static Directory dir;
 	private static IndexSearcher is;
 
-	private static String INDEX_DIR = "/home/fagner/Doutorado/step1/indexes2";
+	private static String INDEX_DIR = "/home/fagner/Doutorado/step1/indexes";
 	private static String TOPICS_FILE = "/home/fagner/Doutorado/topics2014.xml";
 	
 	private static String STEP1_DIR = "/home/fagner/Doutorado/step1/";

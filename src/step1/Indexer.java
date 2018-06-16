@@ -34,58 +34,71 @@ import org.xml.sax.SAXException;
 import crawler.PubMed;
 
 public class Indexer {
-	private static String INDEX_DIR = "/home/fagner/Doutorado/step1/indexes2";
+	private static String INDEX_DIR = "/home/fagner/Doutorado/step1/indexes";
 
 	private static String PAPER_DIR = "/home/fagner/Doutorado/papers/";
 
 	public static void main(String[] args) throws CorruptIndexException, LockObtainFailedException, IOException, ParserConfigurationException, SAXException, ParseException, InterruptedException {
-		//		long start = System.currentTimeMillis();
-		//		Indexer indexer = new Indexer(INDEX_DIR);
-		//		int numIndexed = 0;
-		//
-		//		int nDir = new File(PAPER_DIR).listFiles().length;
-		//
-		//		try {
-		//			for (int i = 0; i < nDir; i++) {
-		//				String current_dir = PAPER_DIR + "pmc-0" + i +"/";
-		//				File[] files = new File(current_dir).listFiles();
-		//				System.out.println(current_dir);
-		//				for (int j = 0; j < files.length; j++) {
-		//					String current_subdir = current_dir + files[j].getName();
-		//					System.out.println("Nome:"+current_subdir);
-		//					numIndexed = indexer.index(current_subdir, new TextFilesFilter());
-		//				}
-		//			}
-		//		} finally {
-		//			indexer.close();
-		//		}
-		//
-		//
-		//		long end = System.currentTimeMillis();
-		//
-		//		System.out.println("Indexing " + numIndexed + " files took " + (end - start) + " milliseconds");
-
-		//		Bloco para teste de uma pasta específica
+		long start = System.currentTimeMillis();
 		Indexer indexer = new Indexer(INDEX_DIR);
+		int numIndexed = 0;
+
+		int nDir = new File(PAPER_DIR).listFiles().length;
+
 		try {
-			indexer.index(PAPER_DIR + "pmc-01/09/", new TextFilesFilter());
+			for (int i = 0; i < nDir; i++) {
+				String current_dir = PAPER_DIR + "pmc-0" + i +"/";
+				File[] files = new File(current_dir).listFiles();
+				System.out.println(current_dir);
+				for (int j = 0; j < files.length; j++) {
+					String current_subdir = current_dir + files[j].getName();
+					System.out.println("Nome:"+current_subdir);
+					numIndexed = indexer.index(current_subdir, new TextFilesFilter());
+				}
+			}
+		} finally {
+			indexer.close();
+		}
+
+		long end = System.currentTimeMillis();
+
+		System.out.println("Indexing " + numIndexed + " files took " + (end - start) + " milliseconds");
+
+		try {
+			for (int i = 0; i < nDir; i++) {
+				String current_dir = PAPER_DIR + "pmc-0" + i +"/";
+				File[] files = new File(current_dir).listFiles();
+				for (int j = 0; j < files.length; j++) {
+					String current_subdir = current_dir + files[j].getName();
+					System.out.println("Updating: "+current_subdir);
+					indexer.updateIndex(current_subdir, new TextFilesFilter());
+				}
+			}
 		} finally {
 			indexer.close();
 		}
 		
-		try {
-			indexer = new Indexer(INDEX_DIR);
-			indexer.updateIndex(PAPER_DIR + "pmc-01/09/", new TextFilesFilter());
-		} finally {
-			indexer.close();
-		}
+		//		Bloco para teste de uma pasta específica
+		//		Indexer indexer = new Indexer(INDEX_DIR);
+		//		try {
+		//			indexer.index(PAPER_DIR + "pmc-01/09/", new TextFilesFilter());
+		//		} finally {
+		//			indexer.close();
+		//		}
+		//		
+		//		try {
+		//			indexer = new Indexer(INDEX_DIR);
+		//			indexer.updateIndex(PAPER_DIR + "pmc-01/09/", new TextFilesFilter());
+		//		} finally {
+		//			indexer.close();
+		//		}
 
-//		indexer.viewIndexedDocs(PAPER_DIR + "pmc-01/09/", new TextFilesFilter());
+		//		indexer.viewIndexedDocs(PAPER_DIR + "pmc-01/09/", new TextFilesFilter());
 	}
 
 	public void viewIndexedDocs(String dataDir, FileFilter filter) throws IOException, ParseException {
 		List<Document> docs = Searcher.getAllDocs();
-		
+
 		int i = 0;
 		for (Document document : docs) {
 			System.out.println(document);
@@ -118,19 +131,19 @@ public class Indexer {
 		for (String pmid : pmids) {
 			if (pmid != null) {
 				Document doc = Searcher.search("pmid", pmid);
-				
+
 				List<String> meshTerms = meshTermsMap.get(pmid);
-				
+
 				String meshTermsString = "";
-				
+
 				if (meshTerms!=null && !meshTerms.isEmpty()) {
 					meshTermsString = meshTerms.remove(0);
-					
+
 					for (String meshTerm : meshTerms) {
 						meshTermsString += ", " + meshTerm;
 					}
 				}
-				
+
 				doc.add(new Field("meshTerms", meshTermsString, Field.Store.YES, Field.Index.ANALYZED));
 				writer.updateDocument(new Term("filename", doc.get("filename")), doc);
 			}
