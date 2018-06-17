@@ -85,51 +85,6 @@ public class XMLtoLuceneDocument {
 
 		handler.dig.parse(f);
 		
-//		System.out.println(pmid);
-//		String url = "https://id.nlm.nih.gov/mesh/sparql";
-//			
-//		String query = "PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>" + 
-//				"PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>" + 
-//				"PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>" + 
-//				"PREFIX owl: <http://www.w3.org/2002/07/owl#>" + 
-//				"PREFIX meshv: <http://id.nlm.nih.gov/mesh/vocab#>" +
-//				"PREFIX mesh: <http://id.nlm.nih.gov/mesh/>PREFIX mesh2015:<http://id.nlm.nih.gov/mesh/2015/>PREFIX mesh2016:<http://id.nlm.nih.gov/mesh/2016/>PREFIX mesh2017:<http://id.nlm.nih.gov/mesh/2017/> " + 
-//				"SELECT DISTINCT ?descriptor ?label " + 
-//				"FROM <http://id.nlm.nih.gov/mesh>" + 
-//				"WHERE {" + 
-//				"mesh:D014777 meshv:treeNumber ?treeNum ." + 
-//				"?childTreeNum meshv:parentTreeNumber+ ?treeNum ." + 
-//				"?descriptor meshv:treeNumber ?childTreeNum ." + 
-//				"?descriptor rdfs:label ?label ." + 
-//				"}"+ 
-//				"ORDER BY ?label";	
-//		
-//		int resultAmount = 0;
-//		int offset = 0;
-//		
-//		List<String> meshTerms = new ArrayList<String>();
-//		
-//		do {
-//			String result = HttpClient.get(url + "?" + "query=" + URLEncoder.encode(query, "UTF-8") + "&format=JSON&offset=" + offset + "0&inference=true", "");
-//			
-//			JsonObject resultJson = new JsonParser().parse(result).getAsJsonObject();
-//			JsonArray bindings = resultJson.getAsJsonObject("results").getAsJsonArray("bindings");
-//			
-//			resultAmount = bindings.size();
-//			
-//			for (int i = 0; i < bindings.size(); i++) {
-//				String meshTerm = bindings.get(i).getAsJsonObject().getAsJsonObject("label").get("value").getAsString();
-//				meshTerms.add(meshTerm);
-//			}
-//			
-//			offset = offset + 1000;
-//			if (resultAmount>=1000)
-//				System.out.println();
-//			System.out.println(resultAmount);
-//		} while (resultAmount/1000 == 1);
-//		
-//		System.out.println(meshTerms);
-		
 		doc.add(new Field("content", new FileReader(f)));
 		doc.add(new Field("filename", f.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 		doc.add(new Field("fullpath", f.getCanonicalPath(), Field.Store.YES, Field.Index.NOT_ANALYZED));

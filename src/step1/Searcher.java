@@ -43,6 +43,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 
 import au.com.bytecode.opencsv.CSVWriter;
+import crawler.PubMed;
 import ncbo.NCBOAnnotator;
 
 public class Searcher {
@@ -51,17 +52,19 @@ public class Searcher {
 	private static Directory dir;
 	private static IndexSearcher is;
 
-	private static String INDEX_DIR = "/home/fagner/Doutorado/step1/indexes";
+	private static String INDEX_DIR = "/home/fagner/Doutorado/step1/indexes2";
 	private static String TOPICS_FILE = "/home/fagner/Doutorado/topics2014.xml";
 	
 	private static String STEP1_DIR = "/home/fagner/Doutorado/step1/";
-	private static String DIAGNOSIS_DIR = STEP1_DIR + "results/diagnosis/";
-	private static String TREATMENT_DIR = STEP1_DIR + "results/treatment/";
-	private static String PROGNOSIS_DIR = STEP1_DIR + "results/prognosis/";
-	private static String REVIEW_DIR = STEP1_DIR + "results/review/";
-	private static String ETIOLOGY_DIR = STEP1_DIR + "/results/etiology/";
+	private static String RESULTS_DIR = STEP1_DIR + "results2/";
+	private static String DIAGNOSIS_DIR = STEP1_DIR + RESULTS_DIR + "diagnosis/";
+	private static String TREATMENT_DIR = STEP1_DIR + RESULTS_DIR + "treatment/";
+	private static String PROGNOSIS_DIR = STEP1_DIR + RESULTS_DIR + "prognosis/";
+	private static String REVIEW_DIR = STEP1_DIR + RESULTS_DIR + "review/";
+	private static String ETIOLOGY_DIR = STEP1_DIR + RESULTS_DIR + "etiology/";
 
 	public static void initiliaze() throws IOException {
+		(new File(RESULTS_DIR)).mkdirs();
 		(new File(TREATMENT_DIR)).mkdirs();
 		(new File(DIAGNOSIS_DIR)).mkdirs();
 		(new File(PROGNOSIS_DIR)).mkdirs();
@@ -88,41 +91,46 @@ public class Searcher {
 	public static void main(String[] args) throws ParseException, SAXException, ParserConfigurationException, TransformerException, IOException {
 		initiliaze();
 //		search("mesh muco cutaneous lymph no de syndrome");
-		System.out.println(search("pmid", "19906740"));
+//		System.out.println(search("pmid", "19906740"));
 //		simplestSearch("Mesh");
 //		List<Topic> topics = getTopics(TOPICS_FILE);
-//
+		search("filename", "29906817.nxml");
+//		searchDiagnosis(topics.get(0).getDescription(), topics.get(0).getNumber());
+		
 //		for (Topic topic : topics) {
 //			String[] results = new String[6];
 //			
 //			results[0] = topic.getNumber().toString();
 //			results[1] = searchTreatment(topic.getDescription(), topic.getNumber()).toString();
-////			results[2] = searchDiagnosis(topic.getDescription(), topic.getNumber()).toString();
-////			results[3] = searchPrognosis(topic.getDescription(), topic.getNumber()).toString();
-////			results[4] = searchEtiology(topic.getDescription(), topic.getNumber()).toString();
-////			results[5] = searchReview(topic.getDescription(), topic.getNumber()).toString();
-////		
-////			System.out.println("Resultados: "+results);
-////			
-////			CSVWriter writer = new CSVWriter(new FileWriter(STEP1_DIR + "result.csv", true));
-////			
-////	        writer.writeNext(results);
-////
-////	        writer.close();
-////	        
-////	        System.out.println("Result saved");
+//			results[2] = searchDiagnosis(topic.getDescription(), topic.getNumber()).toString();
+//			results[3] = searchPrognosis(topic.getDescription(), topic.getNumber()).toString();
+//			results[4] = searchEtiology(topic.getDescription(), topic.getNumber()).toString();
+//			results[5] = searchReview(topic.getDescription(), topic.getNumber()).toString();
+//		
+//			System.out.println("Resultados: "+results);
+//			
+//			CSVWriter writer = new CSVWriter(new FileWriter(STEP1_DIR + "result.csv", true));
+//			
+//	        writer.writeNext(results);
+//
+//	        writer.close();
+//	        
+//	        System.out.println("Result saved");
 //		}
 //		
 		is.close();
 	}
 
 	private static Integer searchDiagnosis(String q, int topicNumber) throws ParseException, IOException, ParserConfigurationException, TransformerException {
+		String search = "";
+		PubMed.getArticles(search);
+		
 		System.out.println("Diagnosis query: " + q);
 
 		QueryParser parser = new  MultiFieldQueryParser(LUCENE_VERSION, new String[] {"title", "abstract"}, new StandardAnalyzer(LUCENE_VERSION));
 		Query t1 = parser.parse("sensitiv* OR accuracy*");
 
-		parser = new  MultiFieldQueryParser(LUCENE_VERSION, new String[] {"keywords"}, new StandardAnalyzer(LUCENE_VERSION));
+		parser = new  MultiFieldQueryParser(LUCENE_VERSION, new String[] {"meshTerms"}, new StandardAnalyzer(LUCENE_VERSION));
 		Query t2 = parser.parse("\"sensitivity and specificity\" OR \"predictive value of tests\"");
 
 		parser = new  MultiFieldQueryParser(LUCENE_VERSION, new String[] {"title", "abstract"}, new StandardAnalyzer(LUCENE_VERSION));
@@ -154,37 +162,36 @@ public class Searcher {
 	private static Integer searchTreatment(String topicDescription, int topicNumber) throws ParseException, IOException, ParserConfigurationException, TransformerException {
 		System.out.println("Treatment query: " + topicDescription);
 
-		JsonArray meshTerms = NCBOAnnotator.annotate(topicDescription);
-		for (JsonElement meshTerm : meshTerms) {
-			System.out.println(meshTerm);
-		}
+//		JsonArray meshTerms = NCBOAnnotator.annotate(topicDescription);
+//		for (JsonElement meshTerm : meshTerms) {
+//			System.out.println(meshTerm);
+//		}
 		
-//		QueryParser parser = new  MultiFieldQueryParser(LUCENE_VERSION, new String[] {"title", "abstract"}, new StandardAnalyzer(LUCENE_VERSION));
-//		Query t1 = parser.parse("randomized OR placebo");
-//
-//		parser = new  QueryParser(LUCENE_VERSION, "type", new StandardAnalyzer(LUCENE_VERSION));
-//		Query t2 = parser.parse("\"randomized controlled trial\"");
-//
-//		BooleanQuery bq = new BooleanQuery();
-//		bq.add(t1, BooleanClause.Occur.SHOULD);
-//		bq.add(t2, BooleanClause.Occur.SHOULD);
-//
-//		System.out.println("Filter: " + bq.toString());
-//
-//		Filter filter = new QueryWrapperFilter(bq);
-//
-//		parser = new  QueryParser(LUCENE_VERSION, "content", new StandardAnalyzer(LUCENE_VERSION));
-//		Query t3 = parser.parse(topicDescription);
-//
-//		TopDocs hits = is.search(t3, filter, 1);
-//
-//		System.out.println("Quantidade: " + hits.totalHits);
-//
-//		hits = is.search(t3, filter, hits.totalHits);
-//
-//		createXMLResult(hits, TREATMENT_DIR, topicNumber);
-//		return hits.totalHits;
-		return 0;
+		QueryParser parser = new  MultiFieldQueryParser(LUCENE_VERSION, new String[] {"title", "abstract"}, new StandardAnalyzer(LUCENE_VERSION));
+		Query t1 = parser.parse("randomized OR placebo");
+
+		parser = new  QueryParser(LUCENE_VERSION, "type", new StandardAnalyzer(LUCENE_VERSION));
+		Query t2 = parser.parse("\"randomized controlled trial\"");
+
+		BooleanQuery bq = new BooleanQuery();
+		bq.add(t1, BooleanClause.Occur.SHOULD);
+		bq.add(t2, BooleanClause.Occur.SHOULD);
+
+		System.out.println("Filter: " + bq.toString());
+
+		Filter filter = new QueryWrapperFilter(bq);
+
+		parser = new  QueryParser(LUCENE_VERSION, "content", new StandardAnalyzer(LUCENE_VERSION));
+		Query t3 = parser.parse(topicDescription);
+
+		TopDocs hits = is.search(t3, filter, 1);
+
+		System.out.println("Quantidade: " + hits.totalHits);
+
+		hits = is.search(t3, filter, hits.totalHits);
+
+		createXMLResult(hits, TREATMENT_DIR, topicNumber);
+		return hits.totalHits;
 	}
 
 	private static Integer searchPrognosis(String q, int topicNumber) throws ParseException, IOException, ParserConfigurationException, TransformerException {
@@ -340,7 +347,7 @@ public class Searcher {
 		Query query = new MatchAllDocsQuery();
 		
 		TopDocs hits = is.search(query, 1);
-		
+		System.out.println(hits.totalHits);
 		hits = is.search(query, hits.totalHits);
 
 		List<Document> docs = new ArrayList<>();

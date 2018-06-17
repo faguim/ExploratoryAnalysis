@@ -5,7 +5,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.StringReader;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -313,6 +315,8 @@ public class PubMed {
 		
 		List<String> papers = fetchById(db, ids, historyServer.get("WebEnv"), historyServer.get("QueryKey"), n);
 		
+		System.out.println("Download Finished");
+		
 		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 		for (String paper : papers) {
@@ -380,59 +384,104 @@ public class PubMed {
 		return meshTermsMap;
 	}
 
-	public static JSONArray eSearch() throws JSONException {
-		String db = "pubmed";
-		String term = "respiratory+failure";
-		String usehistory = "y";
-		String retstart = "0";
-		String retmax = "1";
-		String retmode = "json";
-		String api_key = "7f7ad22b76bc7d1a40952b2213cf5f050708";
+	public static List<String> eSearch(String querySearch) throws JSONException, SAXException, IOException, ParserConfigurationException, InterruptedException {
 		String url = baseurl + "esearch.fcgi?";
 
-		String parameters = "db=" + db + "&" + "term=" + term + "&" + "api_key=" + api_key + "&"
-				// + "retmax=" + retmax + "&"
-				+ "usehistory=" + usehistory;
-		// + "retmode=" + retmode;
+		String db = "pubmed";
+		String retmode = "xml";
+		String rettype = "uilist";
+		
+		long retstart = 0;
+		long retmax = 20000;
+		String usehistory = "y";
 
+		querySearch = URLEncoder.encode(querySearch);
+		
+		String parameters = "term=" + querySearch + 
+				"&db=" + db + 
+				"&retstart=" + retstart +
+				"&retmax=" + retmax +
+				"&rettype=" + rettype + 
+				"&retmode=" + retmode + 
+				"&usehistory=" + usehistory +
+				"&api_key=" + api_key;
+		
 		String query = url + parameters;
 
-		WebResource webResource = client.resource(query);
+		String result = HttpClient.get(query);
 
-		ClientResponse response = webResource.accept(MediaType.APPLICATION_JSON).type(MediaType.APPLICATION_JSON)
-				.get(ClientResponse.class);
-		System.out.println(response);
+		List<String> pmidList = new ArrayList<>();
+		
+		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+		Document doc = docBuilder.parse(new InputSource(new StringReader(result)));
 
-		String responseBody = response.getEntity(String.class);
-		System.out.println(responseBody);
-		JSONObject responseJson = new JSONObject(responseBody);
+		NodeList idList = doc.getElementsByTagName("IdList");
+		for (int i = 0; i < idList.getLength(); i++) {
+			Node idNode = idList.item(i);
+			
+			if (idNode.getNodeType() == Node.ELEMENT_NODE) {
+				Element idNodeElement = (Element) idNode;
 
-		JSONObject esearchresult = responseJson.getJSONObject("esearchresult");
+				NodeList ids = idNodeElement.getElementsByTagName("Id");
+				System.out.println("xml " + ids.getLength());
+				for (int j = 0; j < ids.getLength(); j++) {
+					pmidList.add(ids.item(j).getTextContent());
+				}
+			}
+		}
+		
+		NodeList webEnvXMLElement = doc.getElementsByTagName("WebEnv");
+		NodeList queryKeyElement = doc.getElementsByTagName("QueryKey");
+		NodeList countElement = doc.getElementsByTagName("Count");
 
-		String webenv = esearchresult.getString("webenv");
+		String webEnv = webEnvXMLElement.item(0).getTextContent();
+		String queryKey = queryKeyElement.item(0).getTextContent();
+		long count = Long.valueOf(countElement.item(0).getTextContent());
 
-		int key_query = Integer.parseInt(esearchresult.getString("querykey"));
-		JSONArray idlist = esearchresult.getJSONArray("idlist");
+		retstart = retstart + retmax;
+		
+		querySearch = URLEncoder.encode("#" + queryKey);
+		
+		while(retstart < count) {
+			parameters = "term=" + querySearch + 
+					"&db=" + db + 
+					"&retstart=" + retstart +
+					"&retmax=" + retmax +
+					"&rettype=" + rettype + 
+					"&retmode=" + retmode + 
+					"&usehistory=" + usehistory +
+					"&WebEnv=" + webEnv + 
+					"&query_key=" + queryKey +
+					"&api_key=" + api_key;
 
-		System.out.println("Sumary ------------------------------- ");
+			query = url + parameters;
 
-		url = baseurl + "efetch.fcgi?";
+			result = HttpClient.get(query);
+			doc = docBuilder.parse(new InputSource(new StringReader(result)));
+	
+			idList = doc.getElementsByTagName("IdList");
+			
+			for (int i = 0; i < idList.getLength(); i++) {
+				
+				Node idNode = idList.item(i);
+				
+				if (idNode.getNodeType() == Node.ELEMENT_NODE) {
+					Element idNodeElement = (Element) idNode;
 
-		parameters = "db=" + db + "&" + "query_key=" + key_query + "&" + "WebEnv=" + webenv + "&" + "rettype=abstract&"
-				+ "retmode=text";
-
-		query = url + parameters;
-
-		webResource = client.resource(query);
-
-		response = webResource.accept(MediaType.APPLICATION_JSON).type(MediaType.APPLICATION_JSON)
-				.get(ClientResponse.class);
-
-		// System.out.println(response);
-		responseBody = response.getEntity(String.class);
-		System.out.println(responseBody);
-
-		return idlist;
+					NodeList ids = idNodeElement.getElementsByTagName("Id");
+					for (int j = 0; j < ids.getLength(); j++) {
+						pmidList.add(ids.item(j).getTextContent());
+					}
+				}
+			}
+			
+			retstart = retstart + retmax;
+			Thread.sleep(1000);
+		}
+		System.out.println(count);
+		System.out.println(pmidList.size());
+		return pmidList;
 	}
 
 	public static void eFetch(JSONArray idlist) throws JSONException {
@@ -463,9 +512,17 @@ public class PubMed {
 	public static void main(String[] args) throws JSONException, InterruptedException, ParserConfigurationException,
 	SAXException, IOException, TransformerException {
 		initialize();
+		
+		String searchTerm = "sensitiv*[Title/Abstract] OR \n" + 
+				"sensitivity and specificity[MeSH Terms] OR\n" + 
+				"(predictive[Title/Abstract] AND value*[Title/Abstract]) OR \n" + 
+				"predictive value of tests[MeSH Term] OR \n" + 
+				"accuracy*[Title/Abstract]";
+
+		eSearch(searchTerm);
 		//fetchByTerm("respiratory+failure");
 //		fetchById("pubmed", "19906740");
-		getMeshTerms("19906740");
+//		getMeshTerms("19906740");
 		//ePost("pubmed", "19172194");
 	}
 
@@ -477,5 +534,9 @@ public class PubMed {
 			jsonResponse = new JsonParser().parse("{ \"message\": \"Invalid JSON response\" }");
 		}
 		return new GsonBuilder().setPrettyPrinting().create().toJson(jsonResponse);
+	}
+
+	
+	public static void getArticles(String search) {
 	}
 }
