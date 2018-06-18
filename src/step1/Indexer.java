@@ -79,19 +79,19 @@ public class Indexer {
 //		}
 		
 		//		Bloco para teste de uma pasta específica
-//				Indexer indexer = new Indexer(INDEX_DIR);
-//				try {
-//					indexer.index(PAPER_DIR + "pmc-01/09/", new TextFilesFilter());
-//				} finally {
-//					indexer.close();
-//				}
-//				
 				Indexer indexer = new Indexer(INDEX_DIR);
 				try {
-					indexer.updateIndex(PAPER_DIR + "pmc-01/09/", new TextFilesFilter());
+					indexer.index(PAPER_DIR + "pmc-01/09/", new TextFilesFilter());
 				} finally {
 					indexer.close();
 				}
+//				
+//				Indexer indexer = new Indexer(INDEX_DIR);
+//				try {
+//					indexer.updateIndex(PAPER_DIR + "pmc-01/09/", new TextFilesFilter());
+//				} finally {
+//					indexer.close();
+//				}
 
 //				indexer.viewIndexedDocs(PAPER_DIR + "pmc-01/09/", new TextFilesFilter());
 	}

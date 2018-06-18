@@ -384,7 +384,7 @@ public class PubMed {
 		return meshTermsMap;
 	}
 
-	public static List<String> eSearch(String querySearch) throws JSONException, SAXException, IOException, ParserConfigurationException, InterruptedException {
+	public static List<String> search(String querySearch, String mindate, String maxdate) throws ParserConfigurationException, SAXException, IOException, InterruptedException {
 		String url = baseurl + "esearch.fcgi?";
 
 		String db = "pubmed";
@@ -406,6 +406,12 @@ public class PubMed {
 				"&usehistory=" + usehistory +
 				"&api_key=" + api_key;
 		
+		if (!mindate.isEmpty() && !maxdate.isEmpty()) {
+			parameters += "&datetype=edat" +
+					   "&mindate=" + mindate +
+					   "&maxdate=" + maxdate;
+		}
+		
 		String query = url + parameters;
 
 		String result = HttpClient.get(query);
@@ -424,7 +430,6 @@ public class PubMed {
 				Element idNodeElement = (Element) idNode;
 
 				NodeList ids = idNodeElement.getElementsByTagName("Id");
-				System.out.println("xml " + ids.getLength());
 				for (int j = 0; j < ids.getLength(); j++) {
 					pmidList.add(ids.item(j).getTextContent());
 				}
@@ -439,6 +444,8 @@ public class PubMed {
 		String queryKey = queryKeyElement.item(0).getTextContent();
 		long count = Long.valueOf(countElement.item(0).getTextContent());
 
+		System.out.println("Count: " + count);
+		
 		retstart = retstart + retmax;
 		
 		querySearch = URLEncoder.encode("#" + queryKey);
@@ -479,8 +486,6 @@ public class PubMed {
 			retstart = retstart + retmax;
 			Thread.sleep(1000);
 		}
-		System.out.println(count);
-		System.out.println(pmidList.size());
 		return pmidList;
 	}
 
@@ -519,7 +524,7 @@ public class PubMed {
 				"predictive value of tests[MeSH Term] OR \n" + 
 				"accuracy*[Title/Abstract]";
 
-		eSearch(searchTerm);
+		search(searchTerm, "1950", "2014/01/21");
 		//fetchByTerm("respiratory+failure");
 //		fetchById("pubmed", "19906740");
 //		getMeshTerms("19906740");

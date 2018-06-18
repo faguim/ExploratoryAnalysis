@@ -85,7 +85,7 @@ public class XMLtoLuceneDocument {
 
 		handler.dig.parse(f);
 		
-		doc.add(new Field("content", new FileReader(f)));
+		doc.add(new Field("content", new FileReader(f) ) );
 		doc.add(new Field("filename", f.getName(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 		doc.add(new Field("fullpath", f.getCanonicalPath(), Field.Store.YES, Field.Index.NOT_ANALYZED));
 		
