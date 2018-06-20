@@ -54,11 +54,11 @@ public class Searcher {
 	private static Directory dir;
 	private static IndexSearcher is;
 
-	private static String INDEX_DIR = "/home/fagner/Doutorado/step1/indexes2";
+	private static String INDEX_DIR = "/home/fagner/Doutorado/step1/indexes";
 	private static String TOPICS_FILE = "/home/fagner/Doutorado/topics2014.xml";
 
 	private static String STEP1_DIR = "/home/fagner/Doutorado/step1/";
-	private static String RESULTS_DIR = STEP1_DIR + "results2/";
+	private static String RESULTS_DIR = STEP1_DIR + "results/";
 
 	private static String FILTER_RESULT = RESULTS_DIR + "filter/";
 
@@ -197,23 +197,26 @@ public class Searcher {
 		if (files.length == 0)
 			filterPapers();
 
+		String[] results = new String[6];
+
+		CSVWriter writer = new CSVWriter(new FileWriter(STEP1_DIR + "result.csv", true));
+
 		for (Topic topic : topics) {
-			String[] results = new String[6];
-			
+			System.out.println(topic);
+
 			results[0] = topic.getNumber().toString();
 			results[1] = searchByCategory(topic.getDescription(), topic.getNumber(), "treatement.csv", TREATMENT_DIR).toString();
 			results[2] = searchByCategory(topic.getDescription(), topic.getNumber(), "diagnosis.csv", DIAGNOSIS_DIR).toString();
 			results[3] = searchByCategory(topic.getDescription(), topic.getNumber(), "prognosis.csv", PROGNOSIS_DIR).toString();
 			results[4] = searchByCategory(topic.getDescription(), topic.getNumber(), "etiology.csv", ETIOLOGY_DIR).toString();
 			results[5] = searchByCategory(topic.getDescription(), topic.getNumber(), "review.csv", REVIEW_DIR).toString();
-			
-			CSVWriter writer = new CSVWriter(new FileWriter(STEP1_DIR + "result.csv", true));
+
 
 			writer.writeNext(results);
-			writer.close();
-
-			System.out.println("Result saved");
 		}
+		writer.close();
+
+		System.out.println("Result saved");
 	}
 
 	private static Integer searchDiagnosis(String q, int topicNumber) throws ParseException, IOException, ParserConfigurationException, TransformerException {
@@ -410,11 +413,8 @@ public class Searcher {
 
 		hits = is.search(t3, filter, hits.totalHits);
 
-		for (ScoreDoc scoreDoc : hits.scoreDocs) {
-			Document doc = is.doc(scoreDoc.doc);
-		}
-
-		createXMLResult(hits, dir, topicNumber);
+//		createCSV(hits, dir, topicNumber);
+		//		createXMLResult(hits, dir, topicNumber);
 		return hits.totalHits;
 	}
 
@@ -507,7 +507,25 @@ public class Searcher {
 		return topics;
 	}
 
+	public static void createCSV(TopDocs hits, String dir, int topicNumber) throws CorruptIndexException, IOException {
+		CSVWriter writer = new CSVWriter(new FileWriter(dir + topicNumber + ".csv", true));
+
+		for (ScoreDoc scoreDoc : hits.scoreDocs) {
+			Document doc = is.doc(scoreDoc.doc);
+
+			String[] pmidString = new String[3];
+
+			pmidString[0] = doc.get("fullpath");
+			pmidString[1] = doc.get("title");
+			pmidString[2] = String.valueOf(scoreDoc.score);
+
+			writer.writeNext(pmidString);
+		}
+		writer.close();
+	}
+
 	public static void createXMLResult(TopDocs hits, String dir, int topicNumber) throws ParserConfigurationException, CorruptIndexException, IOException, TransformerException {
+
 		List<String> filepaths = new ArrayList<>();
 
 		DocumentBuilderFactory icFactory = DocumentBuilderFactory.newInstance();
@@ -537,16 +555,16 @@ public class Searcher {
 			type.appendChild(xmlDoc.createTextNode(luceneDoc.get("type")));
 			article.appendChild(type);
 
-			Element abstractElement = xmlDoc.createElement("abstract");
-			abstractElement.appendChild(xmlDoc.createTextNode(luceneDoc.get("abstract")));
-			article.appendChild(abstractElement);
+			//			Element abstractElement = xmlDoc.createElement("abstract");
+			//			abstractElement.appendChild(xmlDoc.createTextNode(luceneDoc.get("abstract")));
+			//			article.appendChild(abstractElement);
 
-			String kwString = luceneDoc.get("keywords");
-			if (!kwString.isEmpty()) {
-				Element keywords = xmlDoc.createElement("keywords");
-				keywords.appendChild(xmlDoc.createTextNode(kwString));
-				article.appendChild(keywords);
-			}
+			//			String kwString = luceneDoc.get("keywords");
+			//			if (!kwString.isEmpty()) {
+			//				Element keywords = xmlDoc.createElement("keywords");
+			//				keywords.appendChild(xmlDoc.createTextNode(kwString));
+			//				article.appendChild(keywords);
+			//			}
 
 			//	Explanation explanation = is.explain(t8, scoreDoc.doc);
 			//	System.out.println(explanation);
