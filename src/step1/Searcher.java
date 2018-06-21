@@ -47,6 +47,7 @@ import org.xml.sax.SAXException;
 import au.com.bytecode.opencsv.CSVReader;
 import au.com.bytecode.opencsv.CSVWriter;
 import crawler.PubMed;
+import input.Input;
 
 public class Searcher {
 	private static final Version LUCENE_VERSION = Version.LUCENE_30;
@@ -57,11 +58,11 @@ public class Searcher {
 	private static String INDEX_DIR = "/home/fagner/Doutorado/step1/indexes";
 	private static String TOPICS_FILE = "/home/fagner/Doutorado/topics2014.xml";
 
-	private static String STEP1_DIR = "/home/fagner/Doutorado/step1/";
+	private static String STEP1_DIR = "/home/fagner/Doutorado/step1 (tests)/";
 	private static String RESULTS_DIR = STEP1_DIR + "results/";
 
-	private static String FILTER_RESULT = RESULTS_DIR + "filter/";
-
+	private static String FILTER_RESULT = STEP1_DIR + "filteredPMIDS/";
+	
 	private static String DIAGNOSIS_DIR = RESULTS_DIR + "diagnosis/";
 	private static String TREATMENT_DIR = RESULTS_DIR + "treatment/";
 	private static String PROGNOSIS_DIR = RESULTS_DIR + "prognosis/";
@@ -86,7 +87,7 @@ public class Searcher {
 
 		header = new String[6];
 		header[0] = "topic";
-		header[1] = "treatement";
+		header[1] = "treatment";
 		header[2] = "diagnosis";
 		header[3] = "prognosis";
 		header[4] = "etiology";
@@ -132,32 +133,33 @@ public class Searcher {
 			String initialDate = "1950"; 
 			String finalDate = "2014/01/21"; 
 
-			List<String> pmids = PubMed.search(filterQueries[i], initialDate, finalDate);
-			System.out.println("pmids: " + pmids.size());
-
-			CSVWriter writer = new CSVWriter(new FileWriter(FILTER_RESULT + header[i+1] + ".csv", true));
-
-			for (String pmid : pmids) {
-				String[] pmidString = new String[1];
-
-				pmidString[0] = pmid;
-				writer.writeNext(pmidString);
-			}
-
-
-			writer.close();
-
-			System.out.println("Filter Result from " + header[i+1] + " saved");
+			PubMed.search(filterQueries[i], initialDate, finalDate, FILTER_RESULT, header[i+1]);
+//			List<String> pmids = PubMed.getPMIDs(filterQueries[i], initialDate, finalDate);
+//			System.out.println("pmids: " + pmids.size());
+//
+//			CSVWriter writer = new CSVWriter(new FileWriter(FILTER_RESULT + header[i+1] + ".csv", true));
+//
+//			for (String pmid : pmids) {
+//				String[] pmidString = new String[1];
+//
+//				pmidString[0] = pmid;
+//				writer.writeNext(pmidString);
+//			}
+//
+//
+//			writer.close();
+//
+//			System.out.println("Filter Result from " + header[i+1] + " saved");
 		}
 	}
 
 	public static void main(String[] args) throws ParseException, SAXException, ParserConfigurationException, TransformerException, IOException, JSONException, InterruptedException {
 		initiliaze();
 
-		List<Topic> topics = getTopics(TOPICS_FILE);
+		List<Topic> topics = Input.getTopics();
 
 		onlineExperiment(topics);
-		//		offlineExperiment(topics);
+//				offlineExperiment(topics);
 
 		//		search("mesh muco cutaneous lymph no de syndrome");
 		//		System.out.println(search("pmid", "19906740"));
@@ -194,29 +196,30 @@ public class Searcher {
 
 	private static void onlineExperiment(List<Topic> topics) throws ParserConfigurationException, SAXException, IOException, InterruptedException, ParseException, TransformerException {
 		File[] files = new File(FILTER_RESULT).listFiles();
-		if (files.length == 0)
+		if (files.length == 0) {
 			filterPapers();
+		} else System.out.println("nao etsa");
 
-		String[] results = new String[6];
-
-		CSVWriter writer = new CSVWriter(new FileWriter(STEP1_DIR + "result.csv", true));
-
-		for (Topic topic : topics) {
-			System.out.println(topic);
-
-			results[0] = topic.getNumber().toString();
-			results[1] = searchByCategory(topic.getDescription(), topic.getNumber(), "treatement.csv", TREATMENT_DIR).toString();
-			results[2] = searchByCategory(topic.getDescription(), topic.getNumber(), "diagnosis.csv", DIAGNOSIS_DIR).toString();
-			results[3] = searchByCategory(topic.getDescription(), topic.getNumber(), "prognosis.csv", PROGNOSIS_DIR).toString();
-			results[4] = searchByCategory(topic.getDescription(), topic.getNumber(), "etiology.csv", ETIOLOGY_DIR).toString();
-			results[5] = searchByCategory(topic.getDescription(), topic.getNumber(), "review.csv", REVIEW_DIR).toString();
-
-
-			writer.writeNext(results);
-		}
-		writer.close();
-
-		System.out.println("Result saved");
+//		String[] results = new String[6];
+//
+//		CSVWriter writer = new CSVWriter(new FileWriter(STEP1_DIR + "result.csv", true));
+//
+//		for (Topic topic : topics) {
+//			System.out.println(topic);
+//
+//			results[0] = topic.getNumber().toString();
+//			results[1] = searchByCategory(topic.getDescription(), topic.getNumber(), "treatement.csv", TREATMENT_DIR).toString();
+//			results[2] = searchByCategory(topic.getDescription(), topic.getNumber(), "diagnosis.csv", DIAGNOSIS_DIR).toString();
+//			results[3] = searchByCategory(topic.getDescription(), topic.getNumber(), "prognosis.csv", PROGNOSIS_DIR).toString();
+//			results[4] = searchByCategory(topic.getDescription(), topic.getNumber(), "etiology.csv", ETIOLOGY_DIR).toString();
+//			results[5] = searchByCategory(topic.getDescription(), topic.getNumber(), "review.csv", REVIEW_DIR).toString();
+//
+//
+//			writer.writeNext(results);
+//		}
+//		writer.close();
+//
+//		System.out.println("Result saved");
 	}
 
 	private static Integer searchDiagnosis(String q, int topicNumber) throws ParseException, IOException, ParserConfigurationException, TransformerException {
@@ -413,7 +416,7 @@ public class Searcher {
 
 		hits = is.search(t3, filter, hits.totalHits);
 
-//		createCSV(hits, dir, topicNumber);
+		createCSV(hits, dir, topicNumber);
 		//		createXMLResult(hits, dir, topicNumber);
 		return hits.totalHits;
 	}
@@ -487,27 +490,8 @@ public class Searcher {
 		return docs;
 	}
 
-	public static List<Topic> getTopics(String filepath) throws IOException, SAXException {
-		Digester dig = new Digester();
-		dig.setValidating(false);
-
-		dig.addObjectCreate("topics", ArrayList.class);
-		dig.addObjectCreate("topics/topic", Topic.class);
-
-		dig.addSetProperties("topics/topic", "number", "number");
-		dig.addSetProperties("topics/topic", "type", "type");
-
-		dig.addBeanPropertySetter("topics/topic/description", "description");
-		dig.addBeanPropertySetter("topics/topic/summary", "summary");
-
-		dig.addSetNext("topics/topic", "add");
-
-		List<Topic> topics = dig.parse(new File(filepath));
-
-		return topics;
-	}
-
 	public static void createCSV(TopDocs hits, String dir, int topicNumber) throws CorruptIndexException, IOException {
+		System.out.println("Salvar: " + dir + topicNumber + ".csv");
 		CSVWriter writer = new CSVWriter(new FileWriter(dir + topicNumber + ".csv", true));
 
 		for (ScoreDoc scoreDoc : hits.scoreDocs) {

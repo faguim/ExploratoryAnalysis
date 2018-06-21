@@ -4,8 +4,11 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
 import java.io.StringReader;
 import java.net.URLEncoder;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -43,6 +46,8 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
+import au.com.bytecode.opencsv.CSVReader;
+import au.com.bytecode.opencsv.CSVWriter;
 import util.HttpClient;
 
 public class PubMed {
@@ -384,7 +389,7 @@ public class PubMed {
 		return meshTermsMap;
 	}
 
-	public static List<String> search(String querySearch, String mindate, String maxdate) throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+	public static List<String> getPMIDs(String querySearch, String mindate, String maxdate) throws ParserConfigurationException, SAXException, IOException, InterruptedException {
 		String url = baseurl + "esearch.fcgi?";
 
 		String db = "pubmed";
@@ -524,7 +529,7 @@ public class PubMed {
 				"predictive value of tests[MeSH Term] OR \n" + 
 				"accuracy*[Title/Abstract]";
 
-		search(searchTerm, "1950", "2014/01/21");
+		getPMIDs(searchTerm, "1950", "2014/01/21");
 		//fetchByTerm("respiratory+failure");
 //		fetchById("pubmed", "19906740");
 //		getMeshTerms("19906740");
@@ -542,6 +547,108 @@ public class PubMed {
 	}
 
 	
-	public static void getArticles(String search) {
+	public static void search(String querySearch, String mindate, String maxdate, String dir_to_save, String filter) throws ParserConfigurationException, SAXException, IOException {
+//		try (
+//				Reader reader = Files.newBufferedReader(Paths.get(dir_to_save + "search-metadata-result.csv"));
+//				CSVReader csvReader = new CSVReader(reader);
+//				String [] nextLine;
+//				while ((nextLine = csvReader.readNext()) != null) {
+//				    // nextLine[] is an array of values from the line
+//				    System.out.println(nextLine[0] + nextLine[1] + "etc...");
+//				}
+//				)
+//		{
+//			
+//		}
+		String url = baseurl + "esearch.fcgi?";
+
+		String db = "pubmed";
+		String retmode = "xml";
+		String rettype = "uilist";
+		
+		String usehistory = "y";
+
+		querySearch = URLEncoder.encode(querySearch);
+		
+		String parameters = "term=" + querySearch + 
+				"&db=" + db + 
+				"&rettype=" + rettype + 
+				"&retmode=" + retmode + 
+				"&usehistory=" + usehistory +
+				"&api_key=" + api_key;
+		
+		if (!mindate.isEmpty() && !maxdate.isEmpty()) {
+			parameters += "&datetype=edat" +
+					   "&mindate=" + mindate +
+					   "&maxdate=" + maxdate;
+		}
+		
+		String query = url + parameters;
+
+		String result = HttpClient.get(query);
+
+		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+		Document doc = docBuilder.parse(new InputSource(new StringReader(result)));
+
+		NodeList webEnvXMLElement = doc.getElementsByTagName("WebEnv");
+		NodeList queryKeyElement = doc.getElementsByTagName("QueryKey");
+		NodeList countElement = doc.getElementsByTagName("Count");
+
+		String webEnv = webEnvXMLElement.item(0).getTextContent();
+		String queryKey = queryKeyElement.item(0).getTextContent();
+		String count = countElement.item(0).getTextContent();
+
+		String[] header = new String[4];
+		
+		File f = new File(dir_to_save + "search-metadata-result.csv");
+		if(!f.exists()) { 
+			header[0] = "Filter";
+			header[1] = "WebEnv";
+			header[2] = "QueryKey";
+			header[3] = "Count";
+			CSVWriter writer = new CSVWriter(new FileWriter(dir_to_save + "search-metadata-result.csv", true));
+			writer.writeNext(header);	
+			writer.close();
+		} 
+
+		CSVWriter writer = new CSVWriter(new FileWriter(dir_to_save + "search-metadata-result.csv", true));
+		
+		header[0] = filter;
+		header[1] = webEnv;
+		header[2] = queryKey;
+		header[3] = count;
+		writer.writeNext(header);
+		
+
+		
+		writer.close();
+		
+	}
+	
+	public static void searchWithFilter(String query, int i, String webEnv, String query_id) {
+
+		
+		//		String url = baseurl + "esearch.fcgi?";
+//
+//		String db = "pubmed";
+//		String retmode = "xml";
+//		String rettype = "uilist";
+//		
+//		long retstart = 0;
+//		long retmax = 20000;
+//		String usehistory = "y";
+//
+//		querySearch = URLEncoder.encode(querySearch);
+//		
+//		String parameters = "term=" + querySearch + 
+//				"&db=" + db + 
+//				"&retstart=" + retstart +
+//				"&retmax=" + retmax +
+//				"&rettype=" + rettype + 
+//				"&retmode=" + retmode + 
+//				"&usehistory=" + usehistory +
+//				"&api_key=" + api_key;
+//		
 	}
 }

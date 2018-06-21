@@ -43,7 +43,7 @@ public class NCBOAnnotator {
 	public static JsonArray annotate(String inputText) {
 		String urlParameters;
 
-		urlParameters = "text=" + inputText + "&ontologies=MESH" + "&exclude_numbers=true"
+		urlParameters = "text=" + URLEncoder.encode(inputText) + "&ontologies=MESH" + "&exclude_numbers=true"
 				+ "&exclude_synonyms=false" + "&longest_only=true";
 		
 		String response = post(REST_URL + "/annotator", urlParameters);
