@@ -8,6 +8,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.net.URLEncoder;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -389,7 +390,110 @@ public class PubMed {
 		return meshTermsMap;
 	}
 
-	public static List<String> getPMIDs(String querySearch, String mindate, String maxdate) throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+	@SuppressWarnings("deprecation")
+	public static List<String> getPMIDs(String searchFile, String filterName) throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+		String webEnv = "";
+		String queryKey = "";
+		long count = 0;
+		
+		List<String> pmidList = new ArrayList<>();
+		
+		try {
+			Reader reader = Files.newBufferedReader(Paths.get(searchFile));
+			CSVReader csvReader = new CSVReader(reader);
+			String [] nextLine;
+
+			while ((nextLine = csvReader.readNext()) != null) {
+				if(nextLine[0].equals(filterName)) {
+					webEnv = nextLine[1];
+					queryKey = nextLine[2];
+					count = Long.valueOf(nextLine[3]);
+					break;
+				}
+			}
+			csvReader.close();
+			
+			String url = baseurl + "esearch.fcgi?";
+
+			String db = "pubmed";
+			String retmode = "xml";
+			String rettype = "uilist";
+			
+			long retstart = 0;
+			long retmax = 10000;
+			String usehistory = "y";
+
+			retstart = retstart + retmax;
+		
+			while(retstart < count) {
+				String parameters = "term=" + URLEncoder.encode("#" + queryKey) + 
+						"&db=" + db + 
+						"&retstart=" + retstart +
+						"&retmax=" + retmax +
+						"&rettype=" + rettype + 
+						"&retmode=" + retmode + 
+						"&usehistory=" + usehistory +
+						"&WebEnv=" + webEnv + 
+						"&query_key=" + queryKey +
+						"&api_key=" + api_key;
+
+				String query = url + parameters;
+
+				String result = HttpClient.get(query);
+
+				DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+				DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+				Document doc = docBuilder.parse(new InputSource(new StringReader(result)));
+		
+				NodeList idList = doc.getElementsByTagName("IdList");
+				
+				for (int i = 0; i < idList.getLength(); i++) {
+					
+					Node idNode = idList.item(i);
+					
+					if (idNode.getNodeType() == Node.ELEMENT_NODE) {
+						Element idNodeElement = (Element) idNode;
+
+						NodeList ids = idNodeElement.getElementsByTagName("Id");
+						for (int j = 0; j < ids.getLength(); j++) {
+							pmidList.add(ids.item(j).getTextContent());
+						}
+					}
+				}
+				
+				retstart = retstart + retmax;
+				Thread.sleep(1000);
+			}
+		} catch (NoSuchFileException e) {
+			System.err.println("Don't exist filters yet");
+		}
+		
+		return pmidList;
+	}
+
+	@SuppressWarnings("deprecation")
+	public static List<String> getPMIDsFromPreviousSearch(String previousSearchName, String filter_result) throws ParserConfigurationException, SAXException, IOException, InterruptedException {
+		String webEnv = "";
+		String queryKey = "";
+		long count = 0;
+		try {
+			Reader reader = Files.newBufferedReader(Paths.get(filter_result + "search-metadata-result.csv"));
+			CSVReader csvReader = new CSVReader(reader);
+			String [] nextLine;
+
+			while ((nextLine = csvReader.readNext()) != null) {
+				if(nextLine[0].equals(previousSearchName)) {
+					webEnv = nextLine[1];
+					queryKey = nextLine[2];
+					count = Long.valueOf(nextLine[3]);
+					break;
+				}
+			}
+			csvReader.close();
+		} catch (NoSuchFileException e) {
+			System.err.println("Don't exist filters yet");
+		}
+		
 		String url = baseurl + "esearch.fcgi?";
 
 		String db = "pubmed";
@@ -400,63 +504,12 @@ public class PubMed {
 		long retmax = 20000;
 		String usehistory = "y";
 
-		querySearch = URLEncoder.encode(querySearch);
-		
-		String parameters = "term=" + querySearch + 
-				"&db=" + db + 
-				"&retstart=" + retstart +
-				"&retmax=" + retmax +
-				"&rettype=" + rettype + 
-				"&retmode=" + retmode + 
-				"&usehistory=" + usehistory +
-				"&api_key=" + api_key;
-		
-		if (!mindate.isEmpty() && !maxdate.isEmpty()) {
-			parameters += "&datetype=edat" +
-					   "&mindate=" + mindate +
-					   "&maxdate=" + maxdate;
-		}
-		
-		String query = url + parameters;
-
-		String result = HttpClient.get(query);
-
 		List<String> pmidList = new ArrayList<>();
 		
-		DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-		Document doc = docBuilder.parse(new InputSource(new StringReader(result)));
-
-		NodeList idList = doc.getElementsByTagName("IdList");
-		for (int i = 0; i < idList.getLength(); i++) {
-			Node idNode = idList.item(i);
-			
-			if (idNode.getNodeType() == Node.ELEMENT_NODE) {
-				Element idNodeElement = (Element) idNode;
-
-				NodeList ids = idNodeElement.getElementsByTagName("Id");
-				for (int j = 0; j < ids.getLength(); j++) {
-					pmidList.add(ids.item(j).getTextContent());
-				}
-			}
-		}
-		
-		NodeList webEnvXMLElement = doc.getElementsByTagName("WebEnv");
-		NodeList queryKeyElement = doc.getElementsByTagName("QueryKey");
-		NodeList countElement = doc.getElementsByTagName("Count");
-
-		String webEnv = webEnvXMLElement.item(0).getTextContent();
-		String queryKey = queryKeyElement.item(0).getTextContent();
-		long count = Long.valueOf(countElement.item(0).getTextContent());
-
-		System.out.println("Count: " + count);
-		
-		retstart = retstart + retmax;
-		
-		querySearch = URLEncoder.encode("#" + queryKey);
+		String parameters = "";
 		
 		while(retstart < count) {
-			parameters = "term=" + querySearch + 
+			parameters = "term=" + URLEncoder.encode("#" + queryKey) + 
 					"&db=" + db + 
 					"&retstart=" + retstart +
 					"&retmax=" + retmax +
@@ -467,20 +520,21 @@ public class PubMed {
 					"&query_key=" + queryKey +
 					"&api_key=" + api_key;
 
-			query = url + parameters;
+			String query = url + parameters;
 
-			result = HttpClient.get(query);
-			doc = docBuilder.parse(new InputSource(new StringReader(result)));
-	
-			idList = doc.getElementsByTagName("IdList");
+			String result = HttpClient.get(query);
 			
+			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+			Document doc = docBuilder.parse(new InputSource(new StringReader(result)));
+	
+			NodeList idList = doc.getElementsByTagName("IdList");
 			for (int i = 0; i < idList.getLength(); i++) {
-				
 				Node idNode = idList.item(i);
 				
 				if (idNode.getNodeType() == Node.ELEMENT_NODE) {
 					Element idNodeElement = (Element) idNode;
-
+	
 					NodeList ids = idNodeElement.getElementsByTagName("Id");
 					for (int j = 0; j < ids.getLength(); j++) {
 						pmidList.add(ids.item(j).getTextContent());
@@ -493,7 +547,7 @@ public class PubMed {
 		}
 		return pmidList;
 	}
-
+	
 	public static void eFetch(JSONArray idlist) throws JSONException {
 		String db = "pubmed";
 		String id = "";
@@ -529,7 +583,7 @@ public class PubMed {
 				"predictive value of tests[MeSH Term] OR \n" + 
 				"accuracy*[Title/Abstract]";
 
-		getPMIDs(searchTerm, "1950", "2014/01/21");
+//		getPMIDs(searchTerm, "1950", "2014/01/21");
 		//fetchByTerm("respiratory+failure");
 //		fetchById("pubmed", "19906740");
 //		getMeshTerms("19906740");
@@ -547,19 +601,26 @@ public class PubMed {
 	}
 
 	
-	public static void search(String querySearch, String mindate, String maxdate, String dir_to_save, String filter) throws ParserConfigurationException, SAXException, IOException {
-//		try (
-//				Reader reader = Files.newBufferedReader(Paths.get(dir_to_save + "search-metadata-result.csv"));
-//				CSVReader csvReader = new CSVReader(reader);
-//				String [] nextLine;
-//				while ((nextLine = csvReader.readNext()) != null) {
-//				    // nextLine[] is an array of values from the line
-//				    System.out.println(nextLine[0] + nextLine[1] + "etc...");
-//				}
-//				)
-//		{
-//			
-//		}
+	public static void search(String querySearch, String mindate, String maxdate, String fileToSaveResult, String filter) throws ParserConfigurationException, SAXException, IOException {
+		String webEnv = "";
+		boolean existsFile = false;
+		try {
+			Reader reader = Files.newBufferedReader(Paths.get(fileToSaveResult));
+			CSVReader csvReader = new CSVReader(reader);
+			String [] nextLine;
+
+			while ((nextLine = csvReader.readNext()) != null) {
+				if(nextLine[0].equals("treatment")) {
+					webEnv = nextLine[1];
+					break;
+				}
+			}
+			existsFile = true;
+			csvReader.close();
+		} catch (NoSuchFileException e) {
+			System.err.println("Don't exist filters yet");
+		}
+
 		String url = baseurl + "esearch.fcgi?";
 
 		String db = "pubmed";
@@ -583,6 +644,10 @@ public class PubMed {
 					   "&maxdate=" + maxdate;
 		}
 		
+		if (!webEnv.isEmpty()) {
+			parameters += "&WebEnv=" + webEnv; 
+		}
+
 		String query = url + parameters;
 
 		String result = HttpClient.get(query);
@@ -595,24 +660,24 @@ public class PubMed {
 		NodeList queryKeyElement = doc.getElementsByTagName("QueryKey");
 		NodeList countElement = doc.getElementsByTagName("Count");
 
-		String webEnv = webEnvXMLElement.item(0).getTextContent();
+		webEnv = webEnvXMLElement.item(0).getTextContent();
+
 		String queryKey = queryKeyElement.item(0).getTextContent();
 		String count = countElement.item(0).getTextContent();
 
 		String[] header = new String[4];
 		
-		File f = new File(dir_to_save + "search-metadata-result.csv");
-		if(!f.exists()) { 
+		if(!existsFile) { 
 			header[0] = "Filter";
 			header[1] = "WebEnv";
 			header[2] = "QueryKey";
 			header[3] = "Count";
-			CSVWriter writer = new CSVWriter(new FileWriter(dir_to_save + "search-metadata-result.csv", true));
+			CSVWriter writer = new CSVWriter(new FileWriter(fileToSaveResult, true));
 			writer.writeNext(header);	
 			writer.close();
 		} 
 
-		CSVWriter writer = new CSVWriter(new FileWriter(dir_to_save + "search-metadata-result.csv", true));
+		CSVWriter writer = new CSVWriter(new FileWriter(fileToSaveResult, true));
 		
 		header[0] = filter;
 		header[1] = webEnv;
@@ -620,35 +685,67 @@ public class PubMed {
 		header[3] = count;
 		writer.writeNext(header);
 		
-
-		
 		writer.close();
-		
 	}
 	
-	public static void searchWithFilter(String query, int i, String webEnv, String query_id) {
-
+	@SuppressWarnings("deprecation")
+	public static List<String> searchWithFilter(String searchQuery, String webEnv, String queryKey, long count) throws InterruptedException, SAXException, IOException, ParserConfigurationException {
 		
-		//		String url = baseurl + "esearch.fcgi?";
-//
-//		String db = "pubmed";
-//		String retmode = "xml";
-//		String rettype = "uilist";
-//		
-//		long retstart = 0;
-//		long retmax = 20000;
-//		String usehistory = "y";
-//
-//		querySearch = URLEncoder.encode(querySearch);
-//		
-//		String parameters = "term=" + querySearch + 
-//				"&db=" + db + 
-//				"&retstart=" + retstart +
-//				"&retmax=" + retmax +
-//				"&rettype=" + rettype + 
-//				"&retmode=" + retmode + 
-//				"&usehistory=" + usehistory +
-//				"&api_key=" + api_key;
-//		
+		String url = baseurl + "esearch.fcgi?";
+
+		String db = "pubmed";
+		String retmode = "xml";
+		String rettype = "uilist";
+		
+		long retstart = 0;
+		long retmax = 10000;
+		String usehistory = "y";
+		
+		List<String> pmidList = new ArrayList<>();
+
+		while(retstart < count) {
+			String parameters = "term=" + URLEncoder.encode("("+searchQuery+") ") + 
+					"&db=" + db + 
+					"&retstart=" + retstart +
+					"&retmax=" + retmax +
+					"&rettype=" + rettype + 
+					"&retmode=" + retmode + 
+					"&usehistory=" + usehistory +
+//					"&WebEnv=" + webEnv + 
+//					"&query_key=" + queryKey +
+					"&api_key=" + api_key;
+			
+			String query = url + parameters;
+
+			String result = HttpClient.get(query);
+
+			System.out.println("result "+result);
+			
+			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+			Document doc = docBuilder.parse(new InputSource(new StringReader(result)));
+
+			NodeList idList = doc.getElementsByTagName("IdList");
+			
+			System.out.println("Tamanho idLost: "+idList.getLength());
+			for (int i = 0; i < idList.getLength(); i++) {
+				Node idNode = idList.item(i);
+				System.out.println(idNode);
+				if (idNode.getNodeType() == Node.ELEMENT_NODE) {
+					Element idNodeElement = (Element) idNode;
+					System.out.println(idNodeElement);
+					NodeList ids = idNodeElement.getElementsByTagName("Id");
+					System.out.println("tamanhoooo " +ids.getLength());
+					for (int j = 0; j < ids.getLength(); j++) {
+						System.out.println("Content: " + ids.item(j).getTextContent());
+						pmidList.add(ids.item(j).getTextContent());
+					}
+				}
+			}
+			
+			retstart = retstart + retmax;
+			Thread.sleep(1000);
+		}
+		return pmidList;
 	}
 }
